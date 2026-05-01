@@ -35,6 +35,7 @@
     "footer_license": "MIT License · Open Source"
   },
   "dashboard": {
+    "logout_spotify": "Sign out Spotify",
     "updated": "Updated now",
     "live": "● Live",
     "back": "← Landing",
@@ -112,8 +113,8 @@
   "callback": {
     "connecting": "Connecting to Spotify…",
     "wait": "Please wait while we authenticate your account.",
-    "error_403_title": "Access denied by Spotify",
-    "error_403_desc": "Your Spotify app is in development mode. Add your email under 'User Management' in the Spotify Dashboard to grant access.",
+    "error_403_title": "Access blocked — Premium required",
+    "error_403_desc": "Since February 2026, Spotify requires Premium to use the Web API in development mode. The app owner must have Spotify Premium to enable access.",
     "error_title": "Authentication failed",
     "error_desc": "An error occurred while connecting to Spotify. Please try again."
   },

@@ -35,6 +35,7 @@
     "footer_license": "MIT License · Open Source"
   },
   "dashboard": {
+    "logout_spotify": "Sair do Spotify",
     "updated": "Atualizado agora",
     "live": "● Ao vivo",
     "back": "← Landing",
@@ -112,8 +113,8 @@
   "callback": {
     "connecting": "Conectando ao Spotify…",
     "wait": "Aguarde enquanto autenticamos sua conta.",
-    "error_403_title": "Acesso negado pelo Spotify",
-    "error_403_desc": "Seu app Spotify está em modo de desenvolvimento. Adicione seu e-mail em 'User Management' no Spotify Dashboard para liberar o acesso.",
+    "error_403_title": "Acesso bloqueado — Premium necessário",
+    "error_403_desc": "Desde fevereiro de 2026, o Spotify exige Premium para usar a Web API em modo de desenvolvimento. O dono do app precisa ter Spotify Premium para liberar o acesso.",
     "error_title": "Falha na autenticação",
     "error_desc": "Ocorreu um erro ao conectar com o Spotify. Tente novamente."
   },

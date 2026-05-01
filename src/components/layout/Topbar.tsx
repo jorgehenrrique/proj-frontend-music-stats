@@ -1,4 +1,7 @@
+import { LogOut } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useAuthStore } from '@/store/authStore'
+import { useUserStore } from '@/store/userStore'
 import type { NavKey } from './Sidebar'
 
 interface Props {
@@ -8,12 +11,19 @@ interface Props {
 
 export function Topbar({ active, onBack }: Props) {
   const { t } = useTranslation()
+  const { spotify, clearSpotify } = useAuthStore()
+  const resetUser = useUserStore((s) => s.reset)
 
   const NAV_KEYS: Record<NavKey, string> = {
     overview: t('nav.overview'),
     top: t('nav.topMusic'),
     habits: t('nav.habits'),
     share: t('nav.share'),
+  }
+
+  function handleLogout() {
+    clearSpotify()
+    resetUser()
   }
 
   return (
@@ -41,6 +51,17 @@ export function Topbar({ active, onBack }: Props) {
         <span className="chip cg" style={{ padding: '5px 12px' }}>
           {t('dashboard.live')}
         </span>
+        {spotify && (
+          <button
+            className="btn-o"
+            style={{ padding: '7px 15px', fontSize: 12.5, display: 'flex', alignItems: 'center', gap: 6 }}
+            onClick={handleLogout}
+            title={t('dashboard.logout_spotify')}
+          >
+            <LogOut size={13} />
+            <span className="topbar-logout-label">{t('dashboard.logout_spotify')}</span>
+          </button>
+        )}
         {onBack && (
           <button className="btn-o" style={{ padding: '7px 15px', fontSize: 12.5 }} onClick={onBack}>
             {t('dashboard.back')}
