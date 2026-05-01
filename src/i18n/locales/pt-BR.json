@@ -102,7 +102,16 @@
     "lastfm_validating": "Validando…",
     "lastfm_not_found": "Usuário não encontrado no Last.fm.",
     "lastfm_error": "Erro ao conectar. Verifique o username e tente novamente.",
-    "lastfm_note": "Apenas leitura — não precisamos de senha."
+    "lastfm_note": "Apenas leitura — não precisamos de senha.",
+    "spotify_missing_client_id": "Adicione VITE_SPOTIFY_CLIENT_ID no arquivo .env para conectar.",
+    "spotify_missing_redirect": "Adicione VITE_SPOTIFY_REDIRECT_URI no arquivo .env para conectar.",
+    "lastfm_missing_key": "Adicione VITE_LASTFM_API_KEY no arquivo .env para usar o Last.fm.",
+    "spotify_not_configured": "Spotify não configurado",
+    "lastfm_not_configured": "Last.fm não configurado"
+  },
+  "callback": {
+    "connecting": "Conectando ao Spotify…",
+    "wait": "Aguarde enquanto autenticamos sua conta."
   },
   "upload": {
     "title": "Upload do Histórico",

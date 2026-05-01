@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Loader } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { exchangeSpotifyCode } from '@/api/spotify'
 import { spotifyApi } from '@/api/spotify'
 import { useUserStore } from '@/store/userStore'
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function Callback({ onSuccess, onError }: Props) {
+  const { t } = useTranslation()
   const statusRef = useRef<CallbackStatus>('processing')
   const ranRef = useRef(false)
 
@@ -90,10 +92,10 @@ export function Callback({ onSuccess, onError }: Props) {
           style={{ animation: 'spin 1s linear infinite', marginBottom: 16 }}
         />
         <div className="syne" style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>
-          Conectando ao Spotify…
+          {t('callback.connecting')}
         </div>
         <div style={{ fontSize: 13, color: 'rgba(235,231,255,0.45)' }}>
-          Aguarde enquanto autenticamos sua conta.
+          {t('callback.wait')}
         </div>
       </div>
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>

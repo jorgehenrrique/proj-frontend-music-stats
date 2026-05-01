@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/authStore'
 import { initiateSpotifyAuth } from '@/api/spotify'
 import { lastfmApi } from '@/api/lastfm'
 import { AuroraBlobs } from '@/components/layout/AuroraBlobs'
+import { toast } from '@/store/toastStore'
 
 type LastfmState = 'idle' | 'input' | 'validating' | 'error'
 
@@ -16,6 +17,29 @@ export function Connect() {
   const [lastfmState, setLastfmState] = useState<LastfmState>('idle')
   const [inputValue, setInputValue] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
+
+  function handleSpotifyConnect() {
+    const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string
+    const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string
+    if (!clientId || clientId === 'your_spotify_client_id_here') {
+      toast.error(t('connect.spotify_missing_client_id'), t('connect.spotify_not_configured'))
+      return
+    }
+    if (!redirectUri || redirectUri === 'your_redirect_uri_here') {
+      toast.error(t('connect.spotify_missing_redirect'), t('connect.spotify_not_configured'))
+      return
+    }
+    initiateSpotifyAuth()
+  }
+
+  function handleLastfmConnect() {
+    const apiKey = import.meta.env.VITE_LASTFM_API_KEY as string
+    if (!apiKey || apiKey === 'your_lastfm_api_key_here') {
+      toast.error(t('connect.lastfm_missing_key'), t('connect.lastfm_not_configured'))
+      return
+    }
+    setLastfmState('input')
+  }
 
   async function handleLastfmConfirm() {
     const username = inputValue.trim()
@@ -114,7 +138,7 @@ export function Connect() {
                 <button
                   className="btn-g"
                   style={{ padding: '8px 18px', fontSize: 13 }}
-                  onClick={() => initiateSpotifyAuth()}
+                  onClick={handleSpotifyConnect}
                 >
                   {t('connect.connect')}
                 </button>
@@ -164,7 +188,7 @@ export function Connect() {
                 <button
                   className="btn-o"
                   style={{ padding: '8px 18px', fontSize: 13 }}
-                  onClick={() => setLastfmState('input')}
+                  onClick={handleLastfmConnect}
                 >
                   {t('connect.connect')}
                 </button>

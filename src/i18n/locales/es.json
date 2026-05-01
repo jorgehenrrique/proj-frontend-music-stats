@@ -102,7 +102,16 @@
     "lastfm_validating": "Validando…",
     "lastfm_not_found": "Usuario no encontrado en Last.fm.",
     "lastfm_error": "Error de conexión. Verifica el username e intenta de nuevo.",
-    "lastfm_note": "Solo lectura — no necesitamos tu contraseña."
+    "lastfm_note": "Solo lectura — no necesitamos tu contraseña.",
+    "spotify_missing_client_id": "Agrega VITE_SPOTIFY_CLIENT_ID en tu archivo .env para conectar.",
+    "spotify_missing_redirect": "Agrega VITE_SPOTIFY_REDIRECT_URI en tu archivo .env para conectar.",
+    "lastfm_missing_key": "Agrega VITE_LASTFM_API_KEY en tu archivo .env para usar Last.fm.",
+    "spotify_not_configured": "Spotify no configurado",
+    "lastfm_not_configured": "Last.fm no configurado"
+  },
+  "callback": {
+    "connecting": "Conectando a Spotify…",
+    "wait": "Espera mientras autenticamos tu cuenta."
   },
   "upload": {
     "title": "Subir Historial",

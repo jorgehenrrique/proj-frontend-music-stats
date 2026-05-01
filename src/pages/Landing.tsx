@@ -9,20 +9,22 @@ interface Props {
   onEnter: () => void
 }
 
-function handleSpotifyConnect() {
-  const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string
-  if (!clientId || clientId === 'your_spotify_client_id_here') {
-    toast.error(
-      'Adicione VITE_SPOTIFY_CLIENT_ID no arquivo .env para conectar.',
-      'Spotify não configurado'
-    )
-    return
-  }
-  initiateSpotifyAuth()
-}
-
 export function Landing({ onEnter }: Props) {
   const { t } = useTranslation()
+
+  function handleSpotifyConnect() {
+    const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string
+    const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string
+    if (!clientId || clientId === 'your_spotify_client_id_here') {
+      toast.error(t('connect.spotify_missing_client_id'), t('connect.spotify_not_configured'))
+      return
+    }
+    if (!redirectUri || redirectUri === 'your_redirect_uri_here') {
+      toast.error(t('connect.spotify_missing_redirect'), t('connect.spotify_not_configured'))
+      return
+    }
+    initiateSpotifyAuth()
+  }
 
   return (
     <div style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
