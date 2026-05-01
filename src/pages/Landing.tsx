@@ -10,7 +10,7 @@ interface Props {
 }
 
 function handleSpotifyConnect() {
-  const clientId = 'https://unwrapped.up.railway.app/callback' as string
+  const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string
   if (!clientId || clientId === 'your_spotify_client_id_here') {
     toast.error(
       'Adicione VITE_SPOTIFY_CLIENT_ID no arquivo .env para conectar.',
