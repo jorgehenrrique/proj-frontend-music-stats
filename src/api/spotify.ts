@@ -1,4 +1,9 @@
-import { SPOTIFY_API_BASE, SPOTIFY_AUTH_URL, SPOTIFY_SCOPES, SPOTIFY_TOKEN_URL } from '@/lib/constants'
+import {
+  SPOTIFY_API_BASE,
+  SPOTIFY_AUTH_URL,
+  SPOTIFY_SCOPES,
+  SPOTIFY_TOKEN_URL,
+} from '@/lib/constants'
 import { useAuthStore } from '@/store/authStore'
 import type {
   SpotifyTimeRange,
@@ -30,6 +35,9 @@ async function generateCodeChallenge(verifier: string): Promise<string> {
 export async function initiateSpotifyAuth(): Promise<void> {
   const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string
   const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string
+
+  console.log('clientId', clientId)
+  console.log('redirectUri', redirectUri)
 
   const verifier = generateCodeVerifier()
   const challenge = await generateCodeChallenge(verifier)
@@ -147,17 +155,12 @@ async function spotifyFetch<T>(endpoint: string): Promise<T> {
 export const spotifyApi = {
   getMe: () => spotifyFetch<SpotifyUser>('/me'),
   getTopTracks: (timeRange: SpotifyTimeRange = 'medium_term', limit = 50) =>
-    spotifyFetch<SpotifyTopTracksResponse>(
-      `/me/top/tracks?time_range=${timeRange}&limit=${limit}`
-    ),
+    spotifyFetch<SpotifyTopTracksResponse>(`/me/top/tracks?time_range=${timeRange}&limit=${limit}`),
   getTopArtists: (timeRange: SpotifyTimeRange = 'medium_term', limit = 50) =>
     spotifyFetch<SpotifyTopArtistsResponse>(
       `/me/top/artists?time_range=${timeRange}&limit=${limit}`
     ),
   getRecentlyPlayed: (limit = 50) =>
-    spotifyFetch<SpotifyRecentlyPlayedResponse>(
-      `/me/player/recently-played?limit=${limit}`
-    ),
-  getCurrentlyPlaying: () =>
-    spotifyFetch<SpotifyCurrentlyPlaying>('/me/player/currently-playing'),
+    spotifyFetch<SpotifyRecentlyPlayedResponse>(`/me/player/recently-played?limit=${limit}`),
+  getCurrentlyPlaying: () => spotifyFetch<SpotifyCurrentlyPlaying>('/me/player/currently-playing'),
 }
