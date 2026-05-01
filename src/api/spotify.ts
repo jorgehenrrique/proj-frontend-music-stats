@@ -36,9 +36,6 @@ export async function initiateSpotifyAuth(): Promise<void> {
   const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string
   const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string
 
-  console.log('clientId', clientId)
-  console.log('redirectUri', redirectUri)
-
   const verifier = generateCodeVerifier()
   const challenge = await generateCodeChallenge(verifier)
 

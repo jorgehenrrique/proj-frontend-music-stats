@@ -11,6 +11,7 @@ interface Props {
 
 function handleSpotifyConnect() {
   const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string
+  console.log('clientId', clientId)
   if (!clientId || clientId === 'your_spotify_client_id_here') {
     toast.error(
       'Adicione VITE_SPOTIFY_CLIENT_ID no arquivo .env para conectar.',
