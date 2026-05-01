@@ -58,5 +58,3 @@ export const GRADIENT_PALETTES = [
   ['#8B5CF6', '#2E1065'],
   ['#059669', '#064E3B'],
 ]
-
-export const GITHUB_REPO_URL = 'https://github.com/jorgehenrrique/'

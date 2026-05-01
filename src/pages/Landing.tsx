@@ -2,7 +2,6 @@ import { BarChart3, Radio, Share2, Play, Flame, Headphones } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { AuroraBlobs } from '@/components/layout/AuroraBlobs'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
-import { GITHUB_REPO_URL } from '@/lib/constants'
 import { initiateSpotifyAuth } from '@/api/spotify'
 import { toast } from '@/store/toastStore'
 
@@ -61,10 +60,18 @@ export function Landing({ onEnter }: Props) {
               Unwrapped
             </span>
           </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: 8,
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              justifyContent: 'flex-end',
+            }}
+          >
             <LanguageSwitcher />
             <a
-              href={GITHUB_REPO_URL}
+              href="https://github.com/jorgehenrrique/proj-frontend-music-stats"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-o"
@@ -176,7 +183,10 @@ export function Landing({ onEnter }: Props) {
               { value: '#1 The Weeknd', label: t('landing.stat_top') },
             ].map((s) => (
               <div key={s.label} style={{ textAlign: 'center' }}>
-                <div className="syne" style={{ fontSize: 'clamp(15px,2.5vw,19px)', fontWeight: 800 }}>
+                <div
+                  className="syne"
+                  style={{ fontSize: 'clamp(15px,2.5vw,19px)', fontWeight: 800 }}
+                >
                   {s.value}
                 </div>
                 <div style={{ fontSize: 11, color: 'rgba(235,231,255,0.33)', marginTop: 2 }}>
@@ -188,10 +198,7 @@ export function Landing({ onEnter }: Props) {
         </div>
 
         {/* Features */}
-        <div
-          className="landing-section"
-          style={{ maxWidth: 980, margin: '0 auto' }}
-        >
+        <div className="landing-section" style={{ maxWidth: 980, margin: '0 auto' }}>
           <div className="grid-3">
             {[
               {
@@ -248,7 +255,10 @@ export function Landing({ onEnter }: Props) {
             textAlign: 'center',
           }}
         >
-          <div className="syne" style={{ fontSize: 'clamp(20px,3.5vw,26px)', fontWeight: 800, marginBottom: 7 }}>
+          <div
+            className="syne"
+            style={{ fontSize: 'clamp(20px,3.5vw,26px)', fontWeight: 800, marginBottom: 7 }}
+          >
             {t('landing.how_title')}
           </div>
           <div style={{ color: 'rgba(235,231,255,0.4)', marginBottom: 30, fontSize: 14 }}>
