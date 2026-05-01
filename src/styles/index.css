@@ -139,7 +139,7 @@ html, body, #root {
 .trow:hover { background: rgba(255,255,255,0.05); }
 
 /* ── Chips ──────────────────────────────────────────────────────── */
-.chip { padding: 3px 9px; border-radius: 50px; font-size: 11px; font-weight: 600; letter-spacing: .3px; }
+.chip { padding: 3px 9px; border-radius: 50px; font-size: 11px; font-weight: 600; letter-spacing: .3px; display: inline-flex; align-items: center; line-height: 1; }
 .cg { background: rgba(29,185,84,0.16); color: #1DB954; }
 .cr { background: rgba(239,68,68,0.16); color: #F87171; }
 .cp { background: rgba(167,139,250,0.16); color: #A78BFA; }

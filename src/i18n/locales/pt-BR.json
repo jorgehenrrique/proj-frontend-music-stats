@@ -29,7 +29,7 @@
     "step3_title": "Explore & Compartilhe",
     "step3_desc": "Navegue por todas as suas estatísticas e gere cards para compartilhar.",
     "stat_hours": "ouvidas em 2024",
-    "stat_scrobbles": "scrobbles",
+    "stat_scrobbles": "reproduções",
     "stat_artists": "artistas únicos",
     "stat_top": "artista favorito",
     "footer_license": "MIT License · Open Source"
@@ -43,7 +43,7 @@
     "top_artist": "Seu artista #1",
     "total_plays": "plays totais",
     "hours_listened": "Horas ouvidas",
-    "scrobbles": "Scrobbles Last.fm",
+    "scrobbles": "Reproduções Last.fm",
     "unique_artists": "Artistas únicos",
     "active_days": "Dias ativos",
     "top_tracks": "Top Músicas",
@@ -82,7 +82,7 @@
     "how_card_desc": "O card extrai automaticamente a cor dominante da capa do seu artista #1 e adapta todo o gradiente do fundo. Você também pode editar o tema manualmente.",
     "year_hours": "Horas",
     "year_artists": "Artistas",
-    "year_scrobbles": "Scrobbles",
+    "year_scrobbles": "Reproduções",
     "year_genres": "Gêneros"
   },
   "connect": {

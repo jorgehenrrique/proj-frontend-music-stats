@@ -29,7 +29,7 @@
     "step3_title": "Explore & Share",
     "step3_desc": "Browse all your stats and generate shareable cards.",
     "stat_hours": "listened in 2024",
-    "stat_scrobbles": "scrobbles",
+    "stat_scrobbles": "plays",
     "stat_artists": "unique artists",
     "stat_top": "top artist",
     "footer_license": "MIT License · Open Source"
@@ -43,7 +43,7 @@
     "top_artist": "Your #1 artist",
     "total_plays": "total plays",
     "hours_listened": "Hours listened",
-    "scrobbles": "Last.fm Scrobbles",
+    "scrobbles": "Last.fm Plays",
     "unique_artists": "Unique artists",
     "active_days": "Active days",
     "top_tracks": "Top Tracks",
@@ -82,7 +82,7 @@
     "how_card_desc": "The card automatically extracts the dominant color from your #1 artist's cover and adapts the entire background gradient. You can also edit the theme manually.",
     "year_hours": "Hours",
     "year_artists": "Artists",
-    "year_scrobbles": "Scrobbles",
+    "year_scrobbles": "Plays",
     "year_genres": "Genres"
   },
   "connect": {

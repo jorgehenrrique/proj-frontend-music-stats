@@ -31,24 +31,30 @@ export function ShareSection() {
     try {
       const html2canvas = (await import('html2canvas')).default
 
-      // Clone into offscreen container with fixed width so the capture
-      // is never affected by the current viewport / responsive layout.
       const clone = cardRef.current.cloneNode(true) as HTMLElement
-      clone.style.position = 'fixed'
-      clone.style.top = '-9999px'
-      clone.style.left = '-9999px'
       clone.style.width = '400px'
       clone.style.height = 'auto'
-      clone.style.overflow = 'visible'
-      document.body.appendChild(clone)
+      clone.style.borderRadius = '22px'
+      clone.style.overflow = 'hidden'
 
-      const canvas = await html2canvas(clone, {
-        backgroundColor: null,
+      // wrapper enforces rounded clip so radial-gradients don't bleed out
+      const wrapper = document.createElement('div')
+      wrapper.style.position = 'fixed'
+      wrapper.style.top = '-9999px'
+      wrapper.style.left = '-9999px'
+      wrapper.style.width = '400px'
+      wrapper.style.borderRadius = '22px'
+      wrapper.style.overflow = 'hidden'
+      wrapper.appendChild(clone)
+      document.body.appendChild(wrapper)
+
+      const canvas = await html2canvas(wrapper, {
+        backgroundColor: '#0D0A1E',
         scale: 2,
         width: 400,
         windowWidth: 400,
       })
-      document.body.removeChild(clone)
+      document.body.removeChild(wrapper)
 
       const link = document.createElement('a')
       link.download = `unwrapped-${type}-${Date.now()}.png`
@@ -93,156 +99,79 @@ export function ShareSection() {
             borderRadius: 22,
             overflow: 'hidden',
             padding: 26,
-            background: 'linear-gradient(135deg,#0D0A1E 0%,#180A22 50%,#091A14 100%)',
-            border: '1px solid rgba(255,255,255,0.09)',
-            position: 'relative',
+            background:
+              'radial-gradient(ellipse at 90% 10%, rgba(233,30,99,0.18) 0%, transparent 55%), ' +
+              'radial-gradient(ellipse at 10% 90%, rgba(29,185,84,0.12) 0%, transparent 55%), ' +
+              'linear-gradient(135deg,#0D0A1E 0%,#180A22 50%,#091A14 100%)',
           }}
         >
-          <div
-            style={{
-              position: 'absolute',
-              top: -40,
-              right: -40,
-              width: 160,
-              height: 160,
-              borderRadius: '50%',
-              background: 'rgba(233,30,99,0.14)',
-              filter: 'blur(50px)',
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              bottom: -30,
-              left: -30,
-              width: 130,
-              height: 130,
-              borderRadius: '50%',
-              background: 'rgba(29,185,84,0.1)',
-              filter: 'blur(40px)',
-            }}
-          />
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: 18,
-              }}
-            >
-              <div className="syne" style={{ fontSize: 17, fontWeight: 800 }}>
-                Unwrapped
-              </div>
-              <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.35)' }}>
-                {new Date().getFullYear()}
-              </span>
-            </div>
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+            <div className="syne" style={{ fontSize: 17, fontWeight: 800 }}>Unwrapped</div>
+            <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.35)' }}>
+              {new Date().getFullYear()}
+            </span>
+          </div>
 
-            {type === 'top5' && (
-              <>
-                <div
-                  style={{
-                    fontSize: 10,
-                    letterSpacing: '1.4px',
-                    color: 'rgba(235,231,255,0.38)',
-                    textTransform: 'uppercase',
-                    marginBottom: 11,
-                  }}
-                >
-                  {t('dashboard.top_tracks')}
-                </div>
-                {DEMO_TRACKS.slice(0, 5).map((tr) => (
-                  <div key={tr.rank} style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 9 }}>
-                    <span style={{ fontSize: 12.5, fontWeight: 700, color: tr.gradient[0], width: 14, flexShrink: 0 }}>
-                      {tr.rank}
-                    </span>
-                    <ArtworkPlaceholder gradient={tr.gradient} size={32} radius={7} />
-                    <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
-                      <div style={{ fontSize: 11.5, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>{tr.name}</div>
-                      <div style={{ fontSize: 10, color: 'rgba(235,231,255,0.38)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tr.artist}</div>
-                    </div>
-                    <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.32)', flexShrink: 0, marginLeft: 4 }}>{tr.plays}×</span>
+          {/* Top 5 tracks */}
+          {type === 'top5' && (
+            <>
+              <div style={{ fontSize: 10, letterSpacing: '1.4px', color: 'rgba(235,231,255,0.38)', textTransform: 'uppercase', marginBottom: 11 }}>
+                {t('dashboard.top_tracks')}
+              </div>
+              {DEMO_TRACKS.slice(0, 5).map((tr) => (
+                <div key={tr.rank} style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 9 }}>
+                  <span style={{ fontSize: 12.5, fontWeight: 700, color: tr.gradient[0], width: 14, flexShrink: 0 }}>
+                    {tr.rank}
+                  </span>
+                  <ArtworkPlaceholder gradient={tr.gradient} size={32} radius={7} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 11.5, fontWeight: 600, wordBreak: 'break-word' }}>{tr.name}</div>
+                    <div style={{ fontSize: 10, color: 'rgba(235,231,255,0.38)' }}>{tr.artist}</div>
                   </div>
-                ))}
-              </>
-            )}
-
-            {type === 'artista' && (
-              <div style={{ textAlign: 'center', padding: '8px 0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <ArtworkPlaceholder gradient={DEMO_ARTISTS[0].gradient} size={76} radius={19} />
-                <div
-                  style={{
-                    marginTop: 11,
-                    fontSize: 10,
-                    color: 'rgba(235,231,255,0.38)',
-                    letterSpacing: '1.2px',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {t('dashboard.my_top_artist')}
+                  <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.32)', flexShrink: 0, marginLeft: 4 }}>{tr.plays}×</span>
                 </div>
-                <div className="syne" style={{ fontSize: 26, fontWeight: 800, marginTop: 3 }}>
-                  {DEMO_ARTISTS[0].name}
-                </div>
-                <div
-                  className="syne"
-                  style={{ fontSize: 34, fontWeight: 800, color: '#E91E63', marginTop: 6 }}
-                >
-                  {DEMO_ARTISTS[0].plays}
-                </div>
-                <div style={{ fontSize: 11, color: 'rgba(235,231,255,0.38)' }}>{t('dashboard.plays_year')}</div>
-              </div>
-            )}
+              ))}
+            </>
+          )}
 
-            {type === 'ano' && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
-                {[
-                  { label: t('dashboard.year_hours'), value: '847h', color: '#1DB954' },
-                  { label: t('dashboard.year_artists'), value: '284', color: '#A78BFA' },
-                  { label: t('dashboard.year_scrobbles'), value: '12.4k', color: '#06B6D4' },
-                  { label: t('dashboard.year_genres'), value: '47', color: '#F59E0B' },
-                ].map((s) => (
-                  <div
-                    key={s.label}
-                    style={{
-                      textAlign: 'center',
-                      padding: '9px',
-                      background: 'rgba(255,255,255,0.05)',
-                      borderRadius: 9,
-                    }}
-                  >
-                    <div className="syne" style={{ fontSize: 19, fontWeight: 800, color: s.color }}>
-                      {s.value}
-                    </div>
-                    <div style={{ fontSize: 10, color: 'rgba(235,231,255,0.38)' }}>{s.label}</div>
-                  </div>
-                ))}
+          {/* Top artist */}
+          {type === 'artista' && (
+            <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+              <ArtworkPlaceholder gradient={DEMO_ARTISTS[0].gradient} size={76} radius={19} />
+              <div style={{ marginTop: 11, fontSize: 10, color: 'rgba(235,231,255,0.38)', letterSpacing: '1.2px', textTransform: 'uppercase' }}>
+                {t('dashboard.my_top_artist')}
               </div>
-            )}
-
-            <div
-              style={{
-                marginTop: 14,
-                paddingTop: 12,
-                borderTop: '1px solid rgba(255,255,255,0.07)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.28)' }}>
-                {siteUrl}
-              </span>
-              <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-                <span className="chip cg" style={{ fontSize: 9.5, display: 'inline-flex', alignItems: 'center' }}>
-                  Spotify
-                </span>
-                <span className="chip cr" style={{ fontSize: 9.5, display: 'inline-flex', alignItems: 'center' }}>
-                  Last.fm
-                </span>
+              <div className="syne" style={{ fontSize: 26, fontWeight: 800, marginTop: 3 }}>
+                {DEMO_ARTISTS[0].name}
               </div>
+              <div className="syne" style={{ fontSize: 34, fontWeight: 800, color: '#E91E63', marginTop: 6 }}>
+                {DEMO_ARTISTS[0].plays}
+              </div>
+              <div style={{ fontSize: 11, color: 'rgba(235,231,255,0.38)' }}>{t('dashboard.plays_year')}</div>
             </div>
+          )}
+
+          {/* Year in review */}
+          {type === 'ano' && (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
+              {[
+                { label: t('dashboard.year_hours'), value: '847h', color: '#1DB954' },
+                { label: t('dashboard.year_artists'), value: '284', color: '#A78BFA' },
+                { label: t('dashboard.year_scrobbles'), value: '12.4k', color: '#06B6D4' },
+                { label: t('dashboard.year_genres'), value: '47', color: '#F59E0B' },
+              ].map((s) => (
+                <div key={s.label} style={{ textAlign: 'center', padding: '9px', background: 'rgba(255,255,255,0.05)', borderRadius: 9 }}>
+                  <div className="syne" style={{ fontSize: 19, fontWeight: 800, color: s.color }}>{s.value}</div>
+                  <div style={{ fontSize: 10, color: 'rgba(235,231,255,0.38)' }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Footer */}
+          <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+            <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.28)' }}>{siteUrl}</span>
           </div>
         </div>
 
@@ -256,26 +185,11 @@ export function ShareSection() {
               {t('dashboard.share_desc')}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <button
-                className="btn-g"
-                style={{ width: '100%', justifyContent: 'center' }}
-                onClick={handleDownload}
-              >
+              <button className="btn-g" style={{ width: '100%', justifyContent: 'center' }} onClick={handleDownload}>
                 <Share2 size={15} /> {t('dashboard.share_image')}
               </button>
-              <button
-                className="btn-o"
-                style={{ width: '100%', justifyContent: 'center' }}
-                onClick={handleCopy}
-              >
-                {copied ? (
-                  <>
-                    <Check size={14} />
-                    {t('dashboard.copied')}
-                  </>
-                ) : (
-                  t('dashboard.copy_link')
-                )}
+              <button className="btn-o" style={{ width: '100%', justifyContent: 'center' }} onClick={handleCopy}>
+                {copied ? <><Check size={14} />{t('dashboard.copied')}</> : t('dashboard.copy_link')}
               </button>
             </div>
           </div>
