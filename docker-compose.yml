@@ -1,0 +1,11 @@
+services:
+  unwrapped:
+    build: .
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_SPOTIFY_CLIENT_ID=${VITE_SPOTIFY_CLIENT_ID}
+      - VITE_SPOTIFY_REDIRECT_URI=${VITE_SPOTIFY_REDIRECT_URI}
+      - VITE_LASTFM_API_KEY=${VITE_LASTFM_API_KEY}
+      - VITE_LASTFM_SHARED_SECRET=${VITE_LASTFM_SHARED_SECRET}
+    restart: unless-stopped
