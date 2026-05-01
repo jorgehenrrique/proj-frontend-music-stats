@@ -6,8 +6,22 @@ import { DEMO_TRACKS, DEMO_ARTISTS } from './DEMO_DATA'
 
 type CardType = 'top5' | 'artista' | 'ano'
 
+function getSiteUrl(): string {
+  const redirect = import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string | undefined
+  if (redirect) {
+    try {
+      const url = new URL(redirect)
+      return url.origin
+    } catch {
+      // fall through
+    }
+  }
+  return window.location.origin
+}
+
 export function ShareSection() {
   const { t } = useTranslation()
+  const siteUrl = getSiteUrl().replace(/^https?:\/\//, '')
   const [type, setType] = useState<CardType>('top5')
   const [copied, setCopied] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -16,10 +30,26 @@ export function ShareSection() {
     if (!cardRef.current) return
     try {
       const html2canvas = (await import('html2canvas')).default
-      const canvas = await html2canvas(cardRef.current, {
+
+      // Clone into offscreen container with fixed width so the capture
+      // is never affected by the current viewport / responsive layout.
+      const clone = cardRef.current.cloneNode(true) as HTMLElement
+      clone.style.position = 'fixed'
+      clone.style.top = '-9999px'
+      clone.style.left = '-9999px'
+      clone.style.width = '400px'
+      clone.style.height = 'auto'
+      clone.style.overflow = 'visible'
+      document.body.appendChild(clone)
+
+      const canvas = await html2canvas(clone, {
         backgroundColor: null,
         scale: 2,
+        width: 400,
+        windowWidth: 400,
       })
+      document.body.removeChild(clone)
+
       const link = document.createElement('a')
       link.download = `unwrapped-${type}-${Date.now()}.png`
       link.href = canvas.toDataURL()
@@ -128,18 +158,18 @@ export function ShareSection() {
                       {tr.rank}
                     </span>
                     <ArtworkPlaceholder gradient={tr.gradient} size={32} radius={7} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 11.5, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{tr.name}</div>
-                      <div style={{ fontSize: 10, color: 'rgba(235,231,255,0.38)' }}>{tr.artist}</div>
+                    <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                      <div style={{ fontSize: 11.5, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>{tr.name}</div>
+                      <div style={{ fontSize: 10, color: 'rgba(235,231,255,0.38)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{tr.artist}</div>
                     </div>
-                    <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.32)', flexShrink: 0 }}>{tr.plays}×</span>
+                    <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.32)', flexShrink: 0, marginLeft: 4 }}>{tr.plays}×</span>
                   </div>
                 ))}
               </>
             )}
 
             {type === 'artista' && (
-              <div style={{ textAlign: 'center', padding: '8px 0' }}>
+              <div style={{ textAlign: 'center', padding: '8px 0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <ArtworkPlaceholder gradient={DEMO_ARTISTS[0].gradient} size={76} radius={19} />
                 <div
                   style={{
@@ -202,13 +232,13 @@ export function ShareSection() {
               }}
             >
               <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.28)' }}>
-                unwrapped.app
+                {siteUrl}
               </span>
-              <div style={{ display: 'flex', gap: 5 }}>
-                <span className="chip cg" style={{ fontSize: 9.5 }}>
+              <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+                <span className="chip cg" style={{ fontSize: 9.5, display: 'inline-flex', alignItems: 'center' }}>
                   Spotify
                 </span>
-                <span className="chip cr" style={{ fontSize: 9.5 }}>
+                <span className="chip cr" style={{ fontSize: 9.5, display: 'inline-flex', alignItems: 'center' }}>
                   Last.fm
                 </span>
               </div>

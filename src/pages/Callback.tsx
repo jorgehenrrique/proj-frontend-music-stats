@@ -65,10 +65,7 @@ export function Callback({ onSuccess, onError }: Props) {
         statusRef.current = 'error'
         const is403 = e instanceof Error && e.message.includes('403')
         if (is403) {
-          toast.error(
-            t('callback.error_403_desc'),
-            t('callback.error_403_title')
-          )
+          toast.error(t('callback.error_403_desc'), t('callback.error_403_title'))
         } else {
           toast.error(t('callback.error_desc'), t('callback.error_title'))
         }
@@ -77,7 +74,7 @@ export function Callback({ onSuccess, onError }: Props) {
     }
 
     handleCallback()
-  }, [onSuccess, onError])
+  }, [onSuccess, onError, t])
 
   return (
     <div
@@ -93,18 +90,25 @@ export function Callback({ onSuccess, onError }: Props) {
       }}
     >
       <AuroraBlobs />
-      <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
         <Loader
           size={36}
           color="#1DB954"
-          style={{ animation: 'spin 1s linear infinite', marginBottom: 16 }}
+          style={{ animation: 'spin 1s linear infinite', marginBottom: 16, display: 'block' }}
         />
         <div className="syne" style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>
           {t('callback.connecting')}
         </div>
-        <div style={{ fontSize: 13, color: 'rgba(235,231,255,0.45)' }}>
-          {t('callback.wait')}
-        </div>
+        <div style={{ fontSize: 13, color: 'rgba(235,231,255,0.45)' }}>{t('callback.wait')}</div>
       </div>
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>
