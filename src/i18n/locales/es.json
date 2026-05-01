@@ -111,7 +111,11 @@
   },
   "callback": {
     "connecting": "Conectando a Spotify…",
-    "wait": "Espera mientras autenticamos tu cuenta."
+    "wait": "Espera mientras autenticamos tu cuenta.",
+    "error_403_title": "Acceso denegado por Spotify",
+    "error_403_desc": "Tu app de Spotify está en modo de desarrollo. Agrega tu email en 'User Management' en el Spotify Dashboard para habilitar el acceso.",
+    "error_title": "Fallo de autenticación",
+    "error_desc": "Ocurrió un error al conectar con Spotify. Intenta de nuevo."
   },
   "upload": {
     "title": "Subir Historial",

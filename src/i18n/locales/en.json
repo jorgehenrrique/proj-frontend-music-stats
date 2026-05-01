@@ -111,7 +111,11 @@
   },
   "callback": {
     "connecting": "Connecting to Spotify…",
-    "wait": "Please wait while we authenticate your account."
+    "wait": "Please wait while we authenticate your account.",
+    "error_403_title": "Access denied by Spotify",
+    "error_403_desc": "Your Spotify app is in development mode. Add your email under 'User Management' in the Spotify Dashboard to grant access.",
+    "error_title": "Authentication failed",
+    "error_desc": "An error occurred while connecting to Spotify. Please try again."
   },
   "upload": {
     "title": "Upload History",

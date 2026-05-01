@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react'
 import { Loader } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { exchangeSpotifyCode } from '@/api/spotify'
-import { spotifyApi } from '@/api/spotify'
+import { exchangeSpotifyCode, spotifyApi } from '@/api/spotify'
 import { useUserStore } from '@/store/userStore'
 import { useAuthStore } from '@/store/authStore'
 import { AuroraBlobs } from '@/components/layout/AuroraBlobs'
+import { toast } from '@/store/toastStore'
 
 type CallbackStatus = 'processing' | 'success' | 'error'
 
@@ -55,15 +55,23 @@ export function Callback({ onSuccess, onError }: Props) {
       try {
         await exchangeSpotifyCode(code)
 
-        // Fetch and store the user profile right after auth
         const user = await spotifyApi.getMe()
         useUserStore.getState().setSpotifyUser(user)
 
         statusRef.current = 'success'
         onSuccess()
-      } catch {
+      } catch (e) {
         useAuthStore.getState().clearSpotify()
         statusRef.current = 'error'
+        const is403 = e instanceof Error && e.message.includes('403')
+        if (is403) {
+          toast.error(
+            t('callback.error_403_desc'),
+            t('callback.error_403_title')
+          )
+        } else {
+          toast.error(t('callback.error_desc'), t('callback.error_title'))
+        }
         onError()
       }
     }
