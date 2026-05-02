@@ -4,6 +4,7 @@ import { ArtworkPlaceholder } from '@/components/ui/ArtworkPlaceholder'
 import { MonthlyChart } from '@/components/charts/MonthlyChart'
 import { GenreBar } from '@/components/charts/GenreBar'
 import { useSpotifyData } from '@/hooks/useSpotifyData'
+import { ScrollingName, TrackTooltip, type TooltipData } from './TrackRow'
 
 const RANGE_MAP = {
   '4s': 'short_term',
@@ -14,6 +15,7 @@ const RANGE_MAP = {
 export function Overview() {
   const { t } = useTranslation()
   const [range, setRange] = useState<'4s' | '6m' | '∞'>('6m')
+  const [tooltip, setTooltip] = useState<TooltipData | null>(null)
 
   const {
     isDemo,
@@ -31,6 +33,14 @@ export function Overview() {
 
   const topArtist = topArtists[0]
   const nowTrack = currentlyPlaying?.item ?? null
+
+  function openTooltip(e: React.MouseEvent, data: TooltipData) {
+    setTooltip({ ...data, x: e.clientX, y: e.clientY })
+  }
+
+  function openSpotify(url: string | null | undefined) {
+    if (url) window.open(url, '_blank', 'noopener,noreferrer')
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
@@ -52,7 +62,9 @@ export function Overview() {
             overflow: 'hidden',
             background: `linear-gradient(135deg,rgba(233,30,99,0.11),rgba(7,7,26,0.55))`,
             border: '1px solid rgba(233,30,99,0.18)',
+            cursor: 'spotifyUrl' in topArtist && topArtist.spotifyUrl ? 'pointer' : 'default',
           }}
+          onClick={() => openSpotify('spotifyUrl' in topArtist ? topArtist.spotifyUrl as string | null : null)}
         >
           <div style={{ position: 'absolute', top: -50, right: -50, width: 220, height: 220, borderRadius: '50%', background: 'rgba(233,30,99,0.13)', filter: 'blur(55px)' }} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(10px,2vw,16px)', position: 'relative', zIndex: 1, flexWrap: 'wrap' }}>
@@ -119,26 +131,52 @@ export function Overview() {
                   <div style={{ flex: 1 }}><div style={{ height: 12, background: 'rgba(255,255,255,0.08)', borderRadius: 4, marginBottom: 4 }} /></div>
                 </div>
               ))
-            : topTracks.slice(0, 6).map((tr) => (
-                <div key={tr.rank} className="trow">
-                  <span style={{ width: 18, fontSize: 11.5, color: 'rgba(235,231,255,0.25)', fontWeight: 700, textAlign: 'right', flexShrink: 0 }}>{tr.rank}</span>
-                  <ArtworkPlaceholder gradient={tr.gradient} size={36} radius={8} imageUrl={'imageUrl' in tr ? tr.imageUrl as string | null : null} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{tr.name}</div>
-                    <div style={{ fontSize: 11, color: 'rgba(235,231,255,0.38)' }}>{tr.artist}</div>
+            : topTracks.slice(0, 6).map((tr) => {
+                const spotifyUrl = 'spotifyUrl' in tr ? tr.spotifyUrl as string | null : null
+                const imageUrl = 'imageUrl' in tr ? tr.imageUrl as string | null : null
+                const albumName = 'albumName' in tr ? tr.albumName as string | null : null
+                return (
+                  <div
+                    key={tr.rank}
+                    className="trow"
+                    style={{ cursor: spotifyUrl ? 'pointer' : 'default' }}
+                    onClick={() => openSpotify(spotifyUrl)}
+                    onMouseEnter={(e) => openTooltip(e, {
+                      x: e.clientX, y: e.clientY,
+                      name: tr.name,
+                      subtitle: tr.artist,
+                      imageUrl,
+                      gradient: tr.gradient,
+                      plays: tr.plays,
+                      extra: albumName ? `Álbum: ${albumName}` : undefined,
+                      spotifyUrl,
+                    })}
+                    onMouseLeave={() => setTooltip(null)}
+                    onMouseMove={(e) => setTooltip((prev) => prev ? { ...prev, x: e.clientX, y: e.clientY } : prev)}
+                  >
+                    <span style={{ width: 18, fontSize: 11.5, color: 'rgba(235,231,255,0.25)', fontWeight: 700, textAlign: 'right', flexShrink: 0 }}>{tr.rank}</span>
+                    <ArtworkPlaceholder gradient={tr.gradient} size={36} radius={8} imageUrl={imageUrl} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <ScrollingName name={tr.name} style={{ fontSize: 12.5, fontWeight: 500 }} />
+                      <div style={{ fontSize: 11, color: 'rgba(235,231,255,0.38)' }}>{tr.artist}</div>
+                    </div>
+                    {tr.plays > 0 && (
+                      <span style={{ fontSize: 11, color: 'rgba(235,231,255,0.32)', whiteSpace: 'nowrap', flexShrink: 0 }}>{tr.plays}×</span>
+                    )}
                   </div>
-                  {tr.plays > 0 && (
-                    <span style={{ fontSize: 11, color: 'rgba(235,231,255,0.32)', whiteSpace: 'nowrap', flexShrink: 0 }}>{tr.plays}×</span>
-                  )}
-                </div>
-              ))}
+                )
+              })}
         </div>
 
         {/* Right column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
-          {/* Now playing / last played */}
+          {/* Now playing / top track */}
           {nowTrack ? (
-            <div className="glass2" style={{ padding: '12px 15px', display: 'flex', alignItems: 'center', gap: 11 }}>
+            <div
+              className="glass2"
+              style={{ padding: '12px 15px', display: 'flex', alignItems: 'center', gap: 11, cursor: nowTrack.external_urls?.spotify ? 'pointer' : 'default' }}
+              onClick={() => openSpotify(nowTrack.external_urls?.spotify)}
+            >
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2.5, height: 18, flexShrink: 0 }}>
                 {['w1', 'w2', 'w3'].map((w) => (
                   <div key={w} className={w} style={{ width: 3, height: 14, background: '#1DB954', borderRadius: 2, transformOrigin: 'bottom' }} />
@@ -146,16 +184,20 @@ export function Overview() {
               </div>
               <ArtworkPlaceholder gradient={['#1DB954', '#0a7a35']} size={38} radius={8} imageUrl={nowTrack.album?.images?.[0]?.url ?? null} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{nowTrack.name}</div>
+                <ScrollingName name={nowTrack.name} style={{ fontSize: 12, fontWeight: 600 }} />
                 <div style={{ fontSize: 11, color: 'rgba(235,231,255,0.38)' }}>{nowTrack.artists?.[0]?.name}</div>
               </div>
               <span className="chip cg" style={{ flexShrink: 0 }}>{t('dashboard.now_playing')}</span>
             </div>
           ) : topTracks[0] ? (
-            <div className="glass2" style={{ padding: '12px 15px', display: 'flex', alignItems: 'center', gap: 11 }}>
+            <div
+              className="glass2"
+              style={{ padding: '12px 15px', display: 'flex', alignItems: 'center', gap: 11, cursor: 'spotifyUrl' in topTracks[0] && topTracks[0].spotifyUrl ? 'pointer' : 'default' }}
+              onClick={() => openSpotify('spotifyUrl' in topTracks[0] ? topTracks[0].spotifyUrl as string | null : null)}
+            >
               <ArtworkPlaceholder gradient={topTracks[0].gradient} size={38} radius={8} imageUrl={'imageUrl' in topTracks[0] ? topTracks[0].imageUrl as string | null : null} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{topTracks[0].name}</div>
+                <ScrollingName name={topTracks[0].name} style={{ fontSize: 12, fontWeight: 600 }} />
                 <div style={{ fontSize: 11, color: 'rgba(235,231,255,0.38)' }}>{topTracks[0].artist}</div>
               </div>
               <span className="chip" style={{ flexShrink: 0, background: 'rgba(255,255,255,0.07)', color: 'rgba(235,231,255,0.4)' }}>#1</span>
@@ -174,6 +216,8 @@ export function Overview() {
           </div>
         )
       }
+
+      {tooltip && <TrackTooltip data={tooltip} />}
     </div>
   )
 }
