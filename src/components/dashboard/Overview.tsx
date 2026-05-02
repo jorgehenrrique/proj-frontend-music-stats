@@ -163,7 +163,7 @@ export function Overview() {
                       <div style={{ fontSize: 11, color: 'rgba(235,231,255,0.38)' }}>{tr.artist}</div>
                     </div>
                     {tr.plays > 0 && (
-                      <span style={{ fontSize: 11, color: 'rgba(235,231,255,0.32)', whiteSpace: 'nowrap', flexShrink: 0 }}>{tr.plays}×</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: tr.gradient[0], whiteSpace: 'nowrap', flexShrink: 0 }}>{tr.plays.toLocaleString()}×</span>
                     )}
                   </div>
                 )
