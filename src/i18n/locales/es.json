@@ -3,7 +3,8 @@
     "overview": "Resumen",
     "topMusic": "Top Música",
     "habits": "Hábitos",
-    "share": "Compartir"
+    "share": "Compartir",
+    "upload": "Historial"
   },
   "landing": {
     "badge": "Open source · Self-hosted · MIT License",
@@ -36,6 +37,7 @@
   },
   "dashboard": {
     "logout_spotify": "Cerrar sesión Spotify",
+    "demo_notice": "Mostrando datos de demostración. Conecta Spotify para ver tus estadísticas reales.",
     "updated": "Actualizado ahora",
     "live": "● En vivo",
     "back": "← Landing",
@@ -108,7 +110,11 @@
     "spotify_missing_redirect": "Agrega VITE_SPOTIFY_REDIRECT_URI en tu archivo .env para conectar.",
     "lastfm_missing_key": "Agrega VITE_LASTFM_API_KEY en tu archivo .env para usar Last.fm.",
     "spotify_not_configured": "Spotify no configurado",
-    "lastfm_not_configured": "Last.fm no configurado"
+    "lastfm_not_configured": "Last.fm no configurado",
+    "lastfm_why_title": "¿Por qué conectar Last.fm? (opcional)",
+    "lastfm_why_desc": "Last.fm almacena tu historial completo de escucha y conteos reales de reproducciones — datos que la API de Spotify no expone. Sin él, los gráficos y conteos serán estimados. Puedes omitir esto y conectar después desde la pestaña Historial.",
+    "continue": "Ir al Dashboard",
+    "skip": "Omitir por ahora"
   },
   "callback": {
     "connecting": "Conectando a Spotify…",
@@ -132,6 +138,10 @@
     "step1": "Ve a tu cuenta de Spotify en spotify.com",
     "step2": "Ve a Privacidad y haz clic en 'Solicitar tus datos'",
     "step3": "Espera el email con el enlace de descarga (puede tardar días)",
-    "step4": "Extrae el ZIP y sube los archivos Streaming_History_Audio_*.json"
+    "step4": "Extrae el ZIP y sube los archivos Streaming_History_Audio_*.json",
+    "why": "El historial completo permite calcular horas escuchadas, días activos, horarios favoritos y más — datos que Spotify no expone a través de la API.",
+    "note": "Los archivos se quedan solo en tu navegador. Ningún dato se envía a servidores externos.",
+    "already_loaded": "Historial cargado — {{plays}} reproducciones en total. Sube de nuevo para actualizar.",
+    "go_to_stats": "Ver estadísticas"
   }
 }

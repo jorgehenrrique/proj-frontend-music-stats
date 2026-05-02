@@ -3,7 +3,8 @@
     "overview": "Overview",
     "topMusic": "Top Music",
     "habits": "Habits",
-    "share": "Share"
+    "share": "Share",
+    "upload": "History"
   },
   "landing": {
     "badge": "Open source · Self-hosted · MIT License",
@@ -36,6 +37,7 @@
   },
   "dashboard": {
     "logout_spotify": "Sign out Spotify",
+    "demo_notice": "Showing demo data. Connect Spotify to see your real statistics.",
     "updated": "Updated now",
     "live": "● Live",
     "back": "← Landing",
@@ -108,7 +110,11 @@
     "spotify_missing_redirect": "Add VITE_SPOTIFY_REDIRECT_URI to your .env file to connect.",
     "lastfm_missing_key": "Add VITE_LASTFM_API_KEY to your .env file to use Last.fm.",
     "spotify_not_configured": "Spotify not configured",
-    "lastfm_not_configured": "Last.fm not configured"
+    "lastfm_not_configured": "Last.fm not configured",
+    "lastfm_why_title": "Why connect Last.fm? (optional)",
+    "lastfm_why_desc": "Last.fm stores your full listening history and real play counts — data Spotify's API doesn't expose. Without it, charts and play counts will be estimated. You can skip this and connect later from the History tab.",
+    "continue": "Go to Dashboard",
+    "skip": "Skip for now"
   },
   "callback": {
     "connecting": "Connecting to Spotify…",
@@ -132,6 +138,10 @@
     "step1": "Go to your Spotify account at spotify.com",
     "step2": "Go to Privacy and click 'Request your data'",
     "step3": "Wait for the email with the download link (may take days)",
-    "step4": "Extract the ZIP and upload Streaming_History_Audio_*.json files"
+    "step4": "Extract the ZIP and upload Streaming_History_Audio_*.json files",
+    "why": "Your full history enables calculation of hours listened, active days, favorite times and more — data Spotify doesn't expose through the API.",
+    "note": "Files stay in your browser only. No data is sent to external servers.",
+    "already_loaded": "History loaded — {{plays}} plays total. Upload again to update.",
+    "go_to_stats": "View statistics"
   }
 }

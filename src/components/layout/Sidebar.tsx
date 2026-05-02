@@ -1,10 +1,10 @@
-import { BarChart3, Clock, Share2, TrendingUp, Headphones } from 'lucide-react'
+import { BarChart3, Clock, Share2, TrendingUp, Headphones, Upload } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useUserStore } from '@/store/userStore'
 import { useAuthStore } from '@/store/authStore'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 
-export type NavKey = 'overview' | 'top' | 'habits' | 'share'
+export type NavKey = 'overview' | 'top' | 'habits' | 'share' | 'upload'
 
 interface Props {
   active: NavKey
@@ -21,6 +21,7 @@ export function Sidebar({ active, onChange }: Props) {
     { k: 'top', Icon: TrendingUp, label: t('nav.topMusic') },
     { k: 'habits', Icon: Clock, label: t('nav.habits') },
     { k: 'share', Icon: Share2, label: t('nav.share') },
+    { k: 'upload', Icon: Upload, label: t('nav.upload') },
   ]
 
   const initial = spotifyUser?.display_name?.[0]?.toUpperCase() ?? 'U'

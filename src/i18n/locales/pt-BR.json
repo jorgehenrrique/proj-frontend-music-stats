@@ -3,7 +3,8 @@
     "overview": "Visão Geral",
     "topMusic": "Top Músicas",
     "habits": "Hábitos",
-    "share": "Compartilhar"
+    "share": "Compartilhar",
+    "upload": "Histórico"
   },
   "landing": {
     "badge": "Open source · Self-hosted · MIT License",
@@ -36,6 +37,7 @@
   },
   "dashboard": {
     "logout_spotify": "Sair do Spotify",
+    "demo_notice": "Exibindo dados de demonstração. Conecte o Spotify para ver suas estatísticas reais.",
     "updated": "Atualizado agora",
     "live": "● Ao vivo",
     "back": "← Landing",
@@ -108,7 +110,11 @@
     "spotify_missing_redirect": "Adicione VITE_SPOTIFY_REDIRECT_URI no arquivo .env para conectar.",
     "lastfm_missing_key": "Adicione VITE_LASTFM_API_KEY no arquivo .env para usar o Last.fm.",
     "spotify_not_configured": "Spotify não configurado",
-    "lastfm_not_configured": "Last.fm não configurado"
+    "lastfm_not_configured": "Last.fm não configurado",
+    "lastfm_why_title": "Por que conectar o Last.fm? (opcional)",
+    "lastfm_why_desc": "O Last.fm armazena seu histórico completo de escuta e contagens reais de reprodução — dados que a API do Spotify não expõe. Sem ele, gráficos e contagens serão estimados. Você pode pular agora e conectar depois pela aba Histórico.",
+    "continue": "Ir para o Dashboard",
+    "skip": "Pular por enquanto"
   },
   "callback": {
     "connecting": "Conectando ao Spotify…",
@@ -132,6 +138,10 @@
     "step1": "Acesse sua conta Spotify em spotify.com",
     "step2": "Vá em Privacidade e clique em 'Solicitar seus dados'",
     "step3": "Aguarde o email com o link de download (pode levar dias)",
-    "step4": "Extraia o ZIP e faça upload dos arquivos Streaming_History_Audio_*.json"
+    "step4": "Extraia o ZIP e faça upload dos arquivos Streaming_History_Audio_*.json",
+    "why": "O histórico completo permite calcular horas ouvidas, dias ativos, horários favoritos e muito mais — dados que o Spotify não expõe pela API.",
+    "note": "Os arquivos ficam apenas no seu navegador. Nenhum dado é enviado para servidores externos.",
+    "already_loaded": "Histórico carregado — {{plays}} reproduções no total. Faça upload novamente para atualizar.",
+    "go_to_stats": "Ver estatísticas"
   }
 }

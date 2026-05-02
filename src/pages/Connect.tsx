@@ -9,7 +9,12 @@ import { toast } from '@/store/toastStore'
 
 type LastfmState = 'idle' | 'input' | 'validating' | 'error'
 
-export function Connect() {
+interface Props {
+  onContinue?: () => void
+  onBack?: () => void
+}
+
+export function Connect({ onContinue, onBack }: Props) {
   const { t } = useTranslation()
   const { spotify, lastfmUsername, clearSpotify, clearLastfm, setLastfm } = useAuthStore()
   const isSpotifyConnected = !!spotify
@@ -260,6 +265,40 @@ export function Connect() {
           </div>
 
         </div>
+
+        {/* Last.fm explanation */}
+        {!lastfmUsername && (
+          <div
+            className="glass"
+            style={{
+              marginTop: 14,
+              padding: 'clamp(14px,3vw,20px)',
+              borderLeft: '3px solid rgba(239,68,68,0.35)',
+            }}
+          >
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+              {t('connect.lastfm_why_title')}
+            </div>
+            <p style={{ fontSize: 12.5, color: 'rgba(235,231,255,0.5)', lineHeight: 1.7, margin: 0 }}>
+              {t('connect.lastfm_why_desc')}
+            </p>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div style={{ display: 'flex', gap: 10, marginTop: 28, flexWrap: 'wrap' }}>
+          {onContinue && (
+            <button className="btn-g" style={{ padding: '10px 24px', fontSize: 14 }} onClick={onContinue}>
+              {t('connect.continue')}
+            </button>
+          )}
+          {onBack && (
+            <button className="btn-o" style={{ padding: '10px 20px', fontSize: 13 }} onClick={onBack}>
+              {t('connect.skip')}
+            </button>
+          )}
+        </div>
+
       </div>
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>

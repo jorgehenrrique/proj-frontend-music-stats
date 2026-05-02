@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BarChart3, Clock, Share2, TrendingUp } from 'lucide-react'
+import { BarChart3, Clock, Share2, TrendingUp, Upload as UploadIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { AuroraBlobs } from '@/components/layout/AuroraBlobs'
 import { Sidebar, type NavKey } from '@/components/layout/Sidebar'
@@ -8,9 +8,11 @@ import { Overview } from '@/components/dashboard/Overview'
 import { TopMusic } from '@/components/dashboard/TopMusic'
 import { Habits } from '@/components/dashboard/Habits'
 import { ShareSection } from '@/components/dashboard/ShareSection'
+import { Upload } from '@/pages/Upload'
 
 interface Props {
   onBack: () => void
+  onLogout: () => void
 }
 
 const NAV_ICONS: Record<NavKey, React.ElementType> = {
@@ -18,9 +20,10 @@ const NAV_ICONS: Record<NavKey, React.ElementType> = {
   top: TrendingUp,
   habits: Clock,
   share: Share2,
+  upload: UploadIcon,
 }
 
-export function Dashboard({ onBack }: Props) {
+export function Dashboard({ onBack, onLogout }: Props) {
   const { t } = useTranslation()
   const [active, setActive] = useState<NavKey>('overview')
 
@@ -29,6 +32,7 @@ export function Dashboard({ onBack }: Props) {
     { k: 'top', label: t('nav.topMusic') },
     { k: 'habits', label: t('nav.habits') },
     { k: 'share', label: t('nav.share') },
+    { k: 'upload', label: t('nav.upload') },
   ]
 
   return (
@@ -38,12 +42,13 @@ export function Dashboard({ onBack }: Props) {
         <Sidebar active={active} onChange={setActive} />
       </div>
       <div className="dash-content">
-        <Topbar active={active} onBack={onBack} />
+        <Topbar active={active} onBack={onBack} onLogout={onLogout} />
         <div className="dash-scroll">
           {active === 'overview' && <Overview />}
           {active === 'top' && <TopMusic />}
           {active === 'habits' && <Habits />}
           {active === 'share' && <ShareSection />}
+          {active === 'upload' && <Upload onDone={() => setActive('overview')} />}
         </div>
       </div>
 

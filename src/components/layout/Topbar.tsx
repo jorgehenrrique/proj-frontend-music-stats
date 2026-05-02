@@ -7,9 +7,10 @@ import type { NavKey } from './Sidebar'
 interface Props {
   active: NavKey
   onBack?: () => void
+  onLogout?: () => void
 }
 
-export function Topbar({ active, onBack }: Props) {
+export function Topbar({ active, onBack, onLogout }: Props) {
   const { t } = useTranslation()
   const { spotify, clearSpotify } = useAuthStore()
   const resetUser = useUserStore((s) => s.reset)
@@ -19,11 +20,13 @@ export function Topbar({ active, onBack }: Props) {
     top: t('nav.topMusic'),
     habits: t('nav.habits'),
     share: t('nav.share'),
+    upload: t('nav.upload'),
   }
 
   function handleLogout() {
     clearSpotify()
     resetUser()
+    onLogout?.()
   }
 
   return (

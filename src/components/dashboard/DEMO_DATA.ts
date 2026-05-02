@@ -18,10 +18,10 @@ export const DEMO_ARTISTS = [
 ]
 
 export const DEMO_MONTHLY = [
-  { month: 'Jan', hours: 62 }, { month: 'Fev', hours: 58 }, { month: 'Mar', hours: 71 },
-  { month: 'Abr', hours: 84 }, { month: 'Mai', hours: 93 }, { month: 'Jun', hours: 78 },
-  { month: 'Jul', hours: 101 }, { month: 'Ago', hours: 88 }, { month: 'Set', hours: 95 },
-  { month: 'Out', hours: 110 }, { month: 'Nov', hours: 87 }, { month: 'Dez', hours: 120 },
+  { month: 'Jan', hours: 62, plays: 1240 }, { month: 'Fev', hours: 58, plays: 1160 }, { month: 'Mar', hours: 71, plays: 1420 },
+  { month: 'Abr', hours: 84, plays: 1680 }, { month: 'Mai', hours: 93, plays: 1860 }, { month: 'Jun', hours: 78, plays: 1560 },
+  { month: 'Jul', hours: 101, plays: 2020 }, { month: 'Ago', hours: 88, plays: 1760 }, { month: 'Set', hours: 95, plays: 1900 },
+  { month: 'Out', hours: 110, plays: 2200 }, { month: 'Nov', hours: 87, plays: 1740 }, { month: 'Dez', hours: 120, plays: 2400 },
 ]
 
 export const DEMO_HOURLY = Array.from({ length: 24 }, (_, i) => ({
