@@ -3,10 +3,20 @@ import { HourlyChart } from '@/components/charts/HourlyChart'
 import { WeeklyChart } from '@/components/charts/WeeklyChart'
 import { useSpotifyData } from '@/hooks/useSpotifyData'
 import { useHistoryStore } from '@/store/historyStore'
+import { NowPlayingCard } from './NowPlayingCard'
 
 export function Habits() {
   const { t } = useTranslation()
-  const { hourly, weekly, topTracks, totalHours, activeDaysCount } = useSpotifyData()
+  const {
+    hourly,
+    weekly,
+    topTracks,
+    topArtists,
+    totalHours,
+    activeDaysCount,
+    currentlyPlaying,
+    isDemo,
+  } = useSpotifyData()
   const history = useHistoryStore((s) => s.history)
 
   const peakHourIndex = hourly.length > 0
@@ -21,18 +31,28 @@ export function Habits() {
   const dailyAvgH = Math.floor(dailyAvgMin / 60)
   const dailyAvgM = dailyAvgMin % 60
 
+  // Popularity stats from Spotify artist data
+  const avgPopularity = topArtists.length > 0
+    ? Math.round(topArtists.slice(0, 10).reduce((s, a) => s + ('popularity' in a ? (a.popularity as number) : 0), 0) / Math.min(topArtists.length, 10))
+    : 0
+
   const curiosities = [
     {
       emoji: '🎵',
       label: t('dashboard.cur_top_track'),
-      value: topTrack ? `${topTrack.name}${topTrack.plays > 0 ? `, ${topTrack.plays}×` : ''}` : '—',
+      value: topTrack ? topTrack.name : '—',
     },
     {
       emoji: '🌙',
       label: t('dashboard.cur_peak_hour'),
-      value: hourly[peakHourIndex]?.plays > 0
+      value: hourly.length > 0 && hourly[peakHourIndex]?.plays > 0
         ? `${peakHourIndex}h – ${(peakHourIndex + 2) % 24}h`
         : '—',
+    },
+    {
+      emoji: '📅',
+      label: t('dashboard.weekly_peak'),
+      value: weekly.length > 0 && peakDay !== '—' ? peakDay : '—',
     },
     {
       emoji: '⏱',
@@ -56,17 +76,31 @@ export function Habits() {
     {
       emoji: '🎤',
       label: t('dashboard.cur_discovered'),
-      value: history ? `${history.uniqueArtists.size} ${t('dashboard.unique_artists').toLowerCase()}` : '—',
+      value: history ? `${history.uniqueArtists.size} artistas` : '—',
     },
     {
       emoji: '🗓',
       label: t('dashboard.active_days'),
       value: activeDaysCount > 0 ? `${activeDaysCount} dias` : '—',
     },
+    ...(avgPopularity > 0 && !isDemo ? [{
+      emoji: '🔥',
+      label: 'Popularidade média',
+      value: `${avgPopularity}/100`,
+    }] : []),
   ]
+
+  function openSpotify(url: string) {
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Now playing — shown at top of Habits when available */}
+      {currentlyPlaying?.item && (
+        <NowPlayingCard currentlyPlaying={currentlyPlaying} onOpenSpotify={openSpotify} />
+      )}
+
       <HourlyChart data={hourly} peakHour={peakHourIndex} />
 
       <div className="grid-2">

@@ -5,6 +5,7 @@ import { MonthlyChart } from '@/components/charts/MonthlyChart'
 import { GenreBar } from '@/components/charts/GenreBar'
 import { useSpotifyData } from '@/hooks/useSpotifyData'
 import { ScrollingName, TrackTooltip, type TooltipData } from './TrackRow'
+import { NowPlayingCard } from './NowPlayingCard'
 
 const RANGE_MAP = {
   '4s': 'short_term',
@@ -32,7 +33,6 @@ export function Overview() {
   } = useSpotifyData(RANGE_MAP[range])
 
   const topArtist = topArtists[0]
-  const nowTrack = currentlyPlaying?.item ?? null
 
   function openTooltip(e: React.MouseEvent, data: TooltipData) {
     setTooltip({ ...data, x: e.clientX, y: e.clientY })
@@ -171,24 +171,11 @@ export function Overview() {
         {/* Right column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
           {/* Now playing / top track */}
-          {nowTrack ? (
-            <div
-              className="glass2"
-              style={{ padding: '12px 15px', display: 'flex', alignItems: 'center', gap: 11, cursor: nowTrack.external_urls?.spotify ? 'pointer' : 'default' }}
-              onClick={() => openSpotify(nowTrack.external_urls?.spotify)}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2.5, height: 18, flexShrink: 0 }}>
-                {['w1', 'w2', 'w3'].map((w) => (
-                  <div key={w} className={w} style={{ width: 3, height: 14, background: '#1DB954', borderRadius: 2, transformOrigin: 'bottom' }} />
-                ))}
-              </div>
-              <ArtworkPlaceholder gradient={['#1DB954', '#0a7a35']} size={38} radius={8} imageUrl={nowTrack.album?.images?.[0]?.url ?? null} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <ScrollingName name={nowTrack.name} style={{ fontSize: 12, fontWeight: 600 }} />
-                <div style={{ fontSize: 11, color: 'rgba(235,231,255,0.38)' }}>{nowTrack.artists?.[0]?.name}</div>
-              </div>
-              <span className="chip cg" style={{ flexShrink: 0 }}>{t('dashboard.now_playing')}</span>
-            </div>
+          {currentlyPlaying ? (
+            <NowPlayingCard
+              currentlyPlaying={currentlyPlaying}
+              onOpenSpotify={openSpotify}
+            />
           ) : topTracks[0] ? (
             <div
               className="glass2"
