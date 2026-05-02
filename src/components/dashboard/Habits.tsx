@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { HourlyChart } from '@/components/charts/HourlyChart'
 import { WeeklyChart } from '@/components/charts/WeeklyChart'
 import { useSpotifyData } from '@/hooks/useSpotifyData'
+import { useNowPlaying } from '@/hooks/useNowPlaying'
 import { useHistoryStore } from '@/store/historyStore'
 import { NowPlayingCard } from './NowPlayingCard'
 
@@ -14,9 +15,10 @@ export function Habits() {
     topArtists,
     totalHours,
     activeDaysCount,
-    currentlyPlaying,
     isDemo,
   } = useSpotifyData()
+
+  const currentlyPlaying = useNowPlaying()
   const history = useHistoryStore((s) => s.history)
 
   const peakHourIndex = hourly.length > 0

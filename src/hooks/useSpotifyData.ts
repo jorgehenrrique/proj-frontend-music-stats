@@ -3,7 +3,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useHistoryStore } from '@/store/historyStore'
 import { spotifyApi } from '@/api/spotify'
 import { lastfmApi } from '@/api/lastfm'
-import type { SpotifyTrack, SpotifyArtist, SpotifyCurrentlyPlaying } from '@/types/spotify'
+import type { SpotifyTrack, SpotifyArtist } from '@/types/spotify'
 import type { MonthlyStats, HourlyStats, WeeklyStats } from '@/types/stats'
 import {
   DEMO_TRACKS,
@@ -43,7 +43,6 @@ export interface SpotifyDataResult {
   totalPlays: number
   uniqueArtistsCount: number
   activeDaysCount: number
-  currentlyPlaying: SpotifyCurrentlyPlaying | null
   loading: boolean
 }
 
@@ -55,7 +54,6 @@ export function useSpotifyData(timeRange: 'short_term' | 'medium_term' | 'long_t
   const [loading, setLoading] = useState(isAuthenticated)
   const [tracks, setTracks] = useState<SpotifyTrack[]>([])
   const [artists, setArtists] = useState<SpotifyArtist[]>([])
-  const [currentlyPlaying, setCurrentlyPlaying] = useState<SpotifyCurrentlyPlaying | null>(null)
   const [lastfmTopTracks, setLastfmTopTracks] = useState<{ name: string; artist: string; plays: number }[]>([])
 
   useEffect(() => {
@@ -71,14 +69,12 @@ export function useSpotifyData(timeRange: 'short_term' | 'medium_term' | 'long_t
     Promise.allSettled([
       spotifyApi.getTopTracks(timeRange, 50),
       spotifyApi.getTopArtists(timeRange, 50),
-      spotifyApi.getCurrentlyPlaying(),
       lastfmUsername
         ? lastfmApi.getTopTracks(lastfmUsername, periodMap[timeRange] as never, 50)
         : Promise.resolve(null),
-    ]).then(([tracksRes, artistsRes, playingRes, lastfmRes]) => {
+    ]).then(([tracksRes, artistsRes, lastfmRes]) => {
       if (tracksRes.status === 'fulfilled') setTracks(tracksRes.value.items)
       if (artistsRes.status === 'fulfilled') setArtists(artistsRes.value.items)
-      if (playingRes.status === 'fulfilled') setCurrentlyPlaying(playingRes.value)
       if (lastfmRes.status === 'fulfilled' && lastfmRes.value) {
         const lfTracks = lastfmRes.value.toptracks?.track ?? []
         setLastfmTopTracks(
@@ -107,7 +103,6 @@ export function useSpotifyData(timeRange: 'short_term' | 'medium_term' | 'long_t
       totalPlays: 12483,
       uniqueArtistsCount: 284,
       activeDaysCount: 287,
-      currentlyPlaying: null,
       loading: false,
     }
   }
@@ -218,7 +213,6 @@ export function useSpotifyData(timeRange: 'short_term' | 'medium_term' | 'long_t
     totalPlays,
     uniqueArtistsCount,
     activeDaysCount,
-    currentlyPlaying,
     loading,
   }
 }

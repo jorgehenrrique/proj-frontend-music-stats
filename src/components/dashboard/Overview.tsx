@@ -4,6 +4,7 @@ import { ArtworkPlaceholder } from '@/components/ui/ArtworkPlaceholder'
 import { MonthlyChart } from '@/components/charts/MonthlyChart'
 import { GenreBar } from '@/components/charts/GenreBar'
 import { useSpotifyData } from '@/hooks/useSpotifyData'
+import { useNowPlaying } from '@/hooks/useNowPlaying'
 import { ScrollingName, TrackTooltip, type TooltipData } from './TrackRow'
 import { NowPlayingCard } from './NowPlayingCard'
 
@@ -28,9 +29,10 @@ export function Overview() {
     totalPlays,
     uniqueArtistsCount,
     activeDaysCount,
-    currentlyPlaying,
     loading,
   } = useSpotifyData(RANGE_MAP[range])
+
+  const currentlyPlaying = useNowPlaying()
 
   const topArtist = topArtists[0]
 

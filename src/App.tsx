@@ -11,6 +11,18 @@ type Page = 'landing' | 'dashboard' | 'callback' | 'connect'
 function detectInitialPage(): Page {
   const params = new URLSearchParams(window.location.search)
   if (params.has('code') || params.has('error')) return 'callback'
+  // If Spotify token is persisted and still valid, go straight to dashboard
+  try {
+    const raw = localStorage.getItem('unwrapped-auth')
+    if (raw) {
+      const { state } = JSON.parse(raw) as { state: { spotify: { expiresAt: number } | null } }
+      if (state?.spotify && Date.now() < state.spotify.expiresAt - 60000) {
+        return 'dashboard'
+      }
+    }
+  } catch {
+    // ignore parse errors
+  }
   return 'landing'
 }
 
