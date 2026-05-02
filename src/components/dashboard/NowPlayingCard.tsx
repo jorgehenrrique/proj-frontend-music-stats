@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArtworkPlaceholder } from '@/components/ui/ArtworkPlaceholder'
 import { ScrollingName } from './TrackRow'
 import type { SpotifyCurrentlyPlaying } from '@/types/spotify'
@@ -61,31 +61,21 @@ function NowPlayingInner({ currentlyPlaying, onOpenSpotify }: InnerProps) {
 
   const [dominantColor, setDominantColor] = useState('#1DB954')
 
-  // Track when this snapshot was received and the progress at that moment.
-  // Use a ref so we can read it in the interval without re-creating it.
-  const baseRef = useRef({ progress: serverProgress, receivedAt: Date.now() })
+  // Initialized from serverProgress. Component is re-keyed by the parent
+  // whenever serverProgress or is_playing changes, so this always starts fresh.
+  const [liveProgress, setLiveProgress] = useState(serverProgress)
 
-  // When the server data changes (new poll result), update the base.
-  // This is a ref write, not setState, so no cascading render.
-  useEffect(() => {
-    baseRef.current = { progress: serverProgress, receivedAt: Date.now() }
-  }, [serverProgress, is_playing])
-
-  // Tick state to force a re-render every second while playing
-  const [tick, setTick] = useState(0)
   useEffect(() => {
     if (!is_playing) return
-    const id = setInterval(() => setTick((t) => t + 1), 1000)
+
+    const id = setInterval(() => {
+      setLiveProgress((prev) => Math.min(prev + 1000, duration))
+    }, 1000)
+
     return () => clearInterval(id)
-  }, [is_playing])
+  }, [is_playing, duration])
 
-  // Derive live progress from base + elapsed time — no setState in effect body
-  const elapsed = is_playing ? Date.now() - baseRef.current.receivedAt : 0
-  const liveProgress = Math.min(baseRef.current.progress + elapsed, duration)
   const liveRatio = duration > 0 ? liveProgress / duration : 0
-
-  // Suppress unused-variable warning from tick (it's read to trigger re-render)
-  void tick
 
   function handleImgLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     setDominantColor(extractDominantColor(e.currentTarget))
