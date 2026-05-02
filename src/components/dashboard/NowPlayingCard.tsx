@@ -1,10 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArtworkPlaceholder } from '@/components/ui/ArtworkPlaceholder'
 import { ScrollingName } from './TrackRow'
 import type { SpotifyCurrentlyPlaying } from '@/types/spotify'
 
 interface Props {
   currentlyPlaying: SpotifyCurrentlyPlaying
+  onOpenSpotify?: (url: string) => void
+}
+
+// Rendered by NowPlayingCard only when track is non-null
+interface InnerProps {
+  currentlyPlaying: SpotifyCurrentlyPlaying & { item: NonNullable<SpotifyCurrentlyPlaying['item']> }
   onOpenSpotify?: (url: string) => void
 }
 
@@ -43,30 +49,43 @@ function extractDominantColor(imgEl: HTMLImageElement): string {
   }
 }
 
-export function NowPlayingCard({ currentlyPlaying, onOpenSpotify }: Props) {
+function NowPlayingInner({ currentlyPlaying, onOpenSpotify }: InnerProps) {
   const { item: track, progress_ms, is_playing } = currentlyPlaying
-  if (!track) return null
 
   const duration = track.duration_ms
-  const progress = progress_ms ?? 0
+  const serverProgress = progress_ms ?? 0
   const imageUrl = track.album?.images?.[0]?.url ?? null
   const spotifyUrl = track.external_urls?.spotify ?? null
   const albumName = track.album?.name ?? null
   const artistName = track.artists?.[0]?.name ?? ''
 
   const [dominantColor, setDominantColor] = useState('#1DB954')
-  const [liveProgress, setLiveProgress] = useState(progress)
 
+  // Track when this snapshot was received and the progress at that moment.
+  // Use a ref so we can read it in the interval without re-creating it.
+  const baseRef = useRef({ progress: serverProgress, receivedAt: Date.now() })
+
+  // When the server data changes (new poll result), update the base.
+  // This is a ref write, not setState, so no cascading render.
   useEffect(() => {
-    setLiveProgress(progress)
-    if (!is_playing) return
-    const interval = setInterval(() => {
-      setLiveProgress((p) => Math.min(p + 1000, duration))
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [progress, is_playing, duration])
+    baseRef.current = { progress: serverProgress, receivedAt: Date.now() }
+  }, [serverProgress, is_playing])
 
-  const liveRatio = duration > 0 ? Math.min(liveProgress / duration, 1) : 0
+  // Tick state to force a re-render every second while playing
+  const [tick, setTick] = useState(0)
+  useEffect(() => {
+    if (!is_playing) return
+    const id = setInterval(() => setTick((t) => t + 1), 1000)
+    return () => clearInterval(id)
+  }, [is_playing])
+
+  // Derive live progress from base + elapsed time — no setState in effect body
+  const elapsed = is_playing ? Date.now() - baseRef.current.receivedAt : 0
+  const liveProgress = Math.min(baseRef.current.progress + elapsed, duration)
+  const liveRatio = duration > 0 ? liveProgress / duration : 0
+
+  // Suppress unused-variable warning from tick (it's read to trigger re-render)
+  void tick
 
   function handleImgLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     setDominantColor(extractDominantColor(e.currentTarget))
@@ -115,7 +134,7 @@ export function NowPlayingCard({ currentlyPlaying, onOpenSpotify }: Props) {
           }
         </div>
 
-        {/* Artwork — hidden img for color extraction + visible placeholder */}
+        {/* Artwork — hidden img for color extraction + visible artwork */}
         <div style={{ position: 'relative', flexShrink: 0 }}>
           {imageUrl && (
             <img
@@ -134,7 +153,7 @@ export function NowPlayingCard({ currentlyPlaying, onOpenSpotify }: Props) {
           <ScrollingName name={track.name} style={{ fontSize: 12.5, fontWeight: 600 }} />
           <div style={{ fontSize: 11, color: dim, marginTop: 1 }}>{artistName}</div>
           {albumName && (
-            <div style={{ fontSize: 10, color: `rgba(235,231,255,0.24)`, marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div style={{ fontSize: 10, color: 'rgba(235,231,255,0.24)', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {albumName}
             </div>
           )}
@@ -177,5 +196,16 @@ export function NowPlayingCard({ currentlyPlaying, onOpenSpotify }: Props) {
         />
       </div>
     </div>
+  )
+}
+
+// Public wrapper — guards against null track before rendering hooks
+export function NowPlayingCard({ currentlyPlaying, onOpenSpotify }: Props) {
+  if (!currentlyPlaying.item) return null
+  return (
+    <NowPlayingInner
+      currentlyPlaying={currentlyPlaying as InnerProps['currentlyPlaying']}
+      onOpenSpotify={onOpenSpotify}
+    />
   )
 }
