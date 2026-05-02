@@ -54,11 +54,36 @@ export function ShareSection() {
     try {
       const html2canvas = (await import('html2canvas')).default
 
+      // Convert external image URLs to base64 so html2canvas can render them
+      async function toBase64(url: string): Promise<string> {
+        const res = await fetch(url)
+        const blob = await res.blob()
+        return new Promise((resolve) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(reader.result as string)
+          reader.readAsDataURL(blob)
+        })
+      }
+
       const clone = cardRef.current.cloneNode(true) as HTMLElement
       clone.style.width = '400px'
       clone.style.height = 'auto'
       clone.style.borderRadius = '22px'
       clone.style.overflow = 'hidden'
+
+      // Replace all <img> src with base64 equivalents
+      const imgs = Array.from(clone.querySelectorAll('img')) as HTMLImageElement[]
+      await Promise.all(
+        imgs.map(async (img) => {
+          if (img.src && img.src.startsWith('http')) {
+            try {
+              img.src = await toBase64(img.src)
+            } catch {
+              // leave as-is if fetch fails
+            }
+          }
+        })
+      )
 
       const wrapper = document.createElement('div')
       wrapper.style.position = 'fixed'
@@ -149,6 +174,7 @@ export function ShareSection() {
                     size={32}
                     radius={7}
                     imageUrl={'imageUrl' in tr ? tr.imageUrl as string | null : null}
+                    crossOrigin="anonymous"
                   />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 11.5, fontWeight: 600, wordBreak: 'break-word' }}>{tr.name}</div>
@@ -172,6 +198,7 @@ export function ShareSection() {
                 size={76}
                 radius={19}
                 imageUrl={'imageUrl' in topArtist ? topArtist.imageUrl as string | null : null}
+                crossOrigin="anonymous"
               />
               <div style={{ marginTop: 11, fontSize: 10, color: 'rgba(235,231,255,0.38)', letterSpacing: '1.2px', textTransform: 'uppercase' }}>
                 {t('dashboard.my_top_artist')}

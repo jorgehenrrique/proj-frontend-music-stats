@@ -5,14 +5,16 @@ interface Props {
   size?: number
   radius?: number
   imageUrl?: string | null
+  crossOrigin?: 'anonymous' | 'use-credentials'
 }
 
-export function ArtworkPlaceholder({ gradient, size = 40, radius = 10, imageUrl }: Props) {
+export function ArtworkPlaceholder({ gradient, size = 40, radius = 10, imageUrl, crossOrigin }: Props) {
   if (imageUrl) {
     return (
       <img
         src={imageUrl}
         alt=""
+        crossOrigin={crossOrigin}
         style={{
           width: size,
           height: size,

@@ -135,8 +135,13 @@ html, body, #root {
   border-radius: 11px;
   transition: background .15s;
   cursor: pointer;
+  min-width: 0;
 }
 .trow:hover { background: rgba(255,255,255,0.05); }
+
+/* Grid columns must not expand past their track size due to long text */
+.grid-2-alt > * { min-width: 0; }
+.grid-2 > * { min-width: 0; }
 
 /* ── Chips ──────────────────────────────────────────────────────── */
 .chip { padding: 3px 9px; border-radius: 50px; font-size: 11px; font-weight: 600; letter-spacing: .3px; display: inline-flex; align-items: center; line-height: 1; }
