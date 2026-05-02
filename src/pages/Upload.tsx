@@ -13,7 +13,9 @@ interface Props {
 export function Upload({ onDone }: Props) {
   const { t } = useTranslation()
   const [dragging, setDragging] = useState(false)
-  const [status, setStatus] = useState<'idle' | 'processing' | 'done' | 'error'>('idle')
+  const [status, setStatus] = useState<'idle' | 'processing' | 'done' | 'error'>(
+    () => (useHistoryStore.getState().history ? 'done' : 'idle')
+  )
   const [error, setError] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
   const setHistoryLoaded = useUserStore((s) => s.setHistoryLoaded)
@@ -93,11 +95,11 @@ export function Upload({ onDone }: Props) {
           onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
-          onClick={() => status !== 'processing' && inputRef.current?.click()}
+          onClick={() => status !== 'processing' && status !== 'done' && inputRef.current?.click()}
           style={{
             padding: 'clamp(24px,5vw,40px) clamp(16px,3vw,24px)',
             textAlign: 'center',
-            cursor: status === 'processing' ? 'default' : 'pointer',
+            cursor: status === 'processing' || status === 'done' ? 'default' : 'pointer',
             border: dragging ? '2px dashed #1DB954' : '2px dashed rgba(255,255,255,0.12)',
             transition: 'border-color .2s',
             marginBottom: 24,
@@ -113,11 +115,20 @@ export function Upload({ onDone }: Props) {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
               <CheckCircle size={32} color="#1DB954" />
               <span style={{ fontSize: 14, color: '#1DB954', fontWeight: 600 }}>{t('upload.success')}</span>
-              {onDone && (
-                <button className="btn-g" style={{ marginTop: 8 }} onClick={onDone}>
-                  {t('upload.go_to_stats')} <ArrowRight size={14} />
+              <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
+                {onDone && (
+                  <button className="btn-g" onClick={onDone}>
+                    {t('upload.go_to_stats')} <ArrowRight size={14} />
+                  </button>
+                )}
+                <button
+                  className="btn-g"
+                  style={{ background: 'rgba(255,255,255,0.07)', color: 'rgba(235,231,255,0.6)' }}
+                  onClick={(e) => { e.stopPropagation(); setStatus('idle'); inputRef.current?.click() }}
+                >
+                  {t('upload.replace')}
                 </button>
-              )}
+              </div>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>

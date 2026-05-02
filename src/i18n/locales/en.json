@@ -58,11 +58,11 @@
     "period_all": "All Time",
     "period_custom": "Custom",
     "now_playing": "● live",
-    "hourly_title": "Listening Hours",
-    "hourly_peak": "Peak: {{from}}h – {{to}}h",
-    "hourly_dist": "Distribution by hour of day",
+    "hourly_title": "Songs by hour of day",
+    "hourly_peak": "You listen most between {{from}}h and {{to}}h",
+    "hourly_dist": "Number of songs played each hour of the day",
     "weekly_title": "By Day of Week",
-    "weekly_peak": "{{day}} is your favorite day",
+    "weekly_peak": "Favorite day",
     "weekly_dist": "Weekly distribution",
     "curiosities": "Fun Facts",
     "cur_top_track": "Most played track",
@@ -87,7 +87,8 @@
     "year_artists": "Artists",
     "year_scrobbles": "Plays",
     "year_genres": "Genres",
-    "upload_hint": "Upload your Spotify streaming history in the History tab to see charts and detailed stats."
+    "upload_hint": "Upload your Spotify streaming history in the History tab to see charts and detailed stats.",
+    "monthly_all_years": "All years"
   },
   "connect": {
     "title": "Connect Integrations",
@@ -130,7 +131,7 @@
   },
   "upload": {
     "title": "Upload History",
-    "subtitle": "Upload your Spotify Extended Streaming History for complete statistics.",
+    "subtitle": "Upload your Spotify Extended Streaming History files — select all years at once for complete stats.",
     "drag_drop": "Drag JSON files here",
     "or": "or",
     "click_select": "click to select",
@@ -146,6 +147,7 @@
     "why": "Your full history enables calculation of hours listened, active days, favorite times and more — data Spotify doesn't expose through the API.",
     "note": "Files stay in your browser only. No data is sent to external servers.",
     "already_loaded": "History loaded — {{plays}} plays total. Upload again to update.",
-    "go_to_stats": "View statistics"
+    "go_to_stats": "View statistics",
+    "replace": "Load new files"
   }
 }

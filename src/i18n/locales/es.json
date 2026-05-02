@@ -58,11 +58,11 @@
     "period_all": "Todo el Tiempo",
     "period_custom": "Personalizado",
     "now_playing": "● en vivo",
-    "hourly_title": "Horarios de Escucha",
-    "hourly_peak": "Pico: {{from}}h – {{to}}h",
-    "hourly_dist": "Distribución por hora del día",
+    "hourly_title": "Canciones por hora del día",
+    "hourly_peak": "Escuchas más música entre las {{from}}h y {{to}}h",
+    "hourly_dist": "Cantidad de canciones reproducidas en cada hora del día",
     "weekly_title": "Por Día de la Semana",
-    "weekly_peak": "{{day}} es tu día favorito",
+    "weekly_peak": "Día favorito",
     "weekly_dist": "Distribución semanal",
     "curiosities": "Curiosidades",
     "cur_top_track": "Canción más reproducida",
@@ -87,7 +87,8 @@
     "year_artists": "Artistas",
     "year_scrobbles": "Reproducciones",
     "year_genres": "Géneros",
-    "upload_hint": "Sube tu historial de streaming de Spotify en la pestaña Historial para ver gráficos y estadísticas detalladas."
+    "upload_hint": "Sube tu historial de streaming de Spotify en la pestaña Historial para ver gráficos y estadísticas detalladas.",
+    "monthly_all_years": "Todos los años"
   },
   "connect": {
     "title": "Conectar Integraciones",
@@ -130,7 +131,7 @@
   },
   "upload": {
     "title": "Subir Historial",
-    "subtitle": "Sube tu Extended Streaming History de Spotify para estadísticas completas.",
+    "subtitle": "Sube tus archivos del Extended Streaming History de Spotify — selecciona todos los años a la vez para estadísticas completas.",
     "drag_drop": "Arrastra los archivos JSON aquí",
     "or": "o",
     "click_select": "haz clic para seleccionar",
@@ -146,6 +147,7 @@
     "why": "El historial completo permite calcular horas escuchadas, días activos, horarios favoritos y más — datos que Spotify no expone a través de la API.",
     "note": "Los archivos se quedan solo en tu navegador. Ningún dato se envía a servidores externos.",
     "already_loaded": "Historial cargado — {{plays}} reproducciones en total. Sube de nuevo para actualizar.",
-    "go_to_stats": "Ver estadísticas"
+    "go_to_stats": "Ver estadísticas",
+    "replace": "Cargar nuevos archivos"
   }
 }

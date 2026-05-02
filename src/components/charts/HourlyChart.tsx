@@ -12,13 +12,20 @@ export function HourlyChart({ data, peakHour }: Props) {
 
   return (
     <div className="glass fu" style={{ padding: 20 }}>
-      <div className="syne" style={{ fontSize: 14, fontWeight: 700, marginBottom: 3 }}>
-        {t('dashboard.hourly_title')}
-      </div>
-      <div style={{ fontSize: 12, color: 'rgba(235,231,255,0.38)', marginBottom: 15 }}>
-        {peakHour !== undefined
-          ? t('dashboard.hourly_peak', { from: peakHour, to: (peakHour + 2) % 24 })
-          : t('dashboard.hourly_dist')}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 15 }}>
+        <div>
+          <div className="syne" style={{ fontSize: 14, fontWeight: 700, marginBottom: 3 }}>
+            {t('dashboard.hourly_title')}
+          </div>
+          <div style={{ fontSize: 12, color: 'rgba(235,231,255,0.38)' }}>
+            {peakHour !== undefined
+              ? t('dashboard.hourly_peak', { from: peakHour, to: (peakHour + 2) % 24 })
+              : t('dashboard.hourly_dist')}
+          </div>
+        </div>
+        <div style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.22)', textAlign: 'right', flexShrink: 0, marginTop: 2 }}>
+          músicas<br />reproduzidas
+        </div>
       </div>
       <ResponsiveContainer width="100%" height={120}>
         <BarChart data={data} margin={{ top: 0, right: 0, bottom: 0, left: -36 }}>
