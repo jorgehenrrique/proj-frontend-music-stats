@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Music2, Radio, Check, X, Loader } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/store/authStore'
+import { useUserStore } from '@/store/userStore'
 import { initiateSpotifyAuth } from '@/api/spotify'
 import { lastfmApi } from '@/api/lastfm'
 import { AuroraBlobs } from '@/components/layout/AuroraBlobs'
@@ -17,11 +18,22 @@ interface Props {
 export function Connect({ onContinue, onBack }: Props) {
   const { t } = useTranslation()
   const { spotify, lastfmUsername, clearSpotify, clearLastfm, setLastfm } = useAuthStore()
+  const resetUser = useUserStore((s) => s.reset)
   const isSpotifyConnected = !!spotify
+  const isLastfmConnected = !!lastfmUsername
+  const bothConnected = isSpotifyConnected && isLastfmConnected
 
   const [lastfmState, setLastfmState] = useState<LastfmState>('idle')
   const [inputValue, setInputValue] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
+
+  // Auto-advance when both services become connected
+  useEffect(() => {
+    if (bothConnected && onContinue) {
+      const timer = setTimeout(() => onContinue(), 800)
+      return () => clearTimeout(timer)
+    }
+  }, [bothConnected, onContinue])
 
   function handleSpotifyConnect() {
     const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID as string
@@ -35,6 +47,15 @@ export function Connect({ onContinue, onBack }: Props) {
       return
     }
     initiateSpotifyAuth()
+  }
+
+  function handleSpotifyDisconnect() {
+    // Disconnecting Spotify also clears Last.fm since it's tied to the session
+    clearLastfm()
+    clearSpotify()
+    resetUser()
+    // Navigate to landing — no Spotify means no app
+    onBack?.()
   }
 
   function handleLastfmConnect() {
@@ -55,10 +76,10 @@ export function Connect({ onContinue, onBack }: Props) {
 
     try {
       const result = await lastfmApi.getUser(username)
-      // getUser throws on 4xx; if it returns, user exists
       setLastfm('', result.user.name)
       setLastfmState('idle')
       setInputValue('')
+      // auto-advance handled by useEffect above
     } catch (e) {
       const msg = e instanceof Error && e.message.toLowerCase().includes('user not found')
         ? t('connect.lastfm_not_found')
@@ -79,7 +100,19 @@ export function Connect({ onContinue, onBack }: Props) {
     setLastfmState('idle')
     setInputValue('')
     setErrorMsg('')
+    // Stay on page — Spotify still connected
   }
+
+  const disconnectBtn = (onClick: () => void) => (
+    <button
+      className="btn-o"
+      style={{ padding: '6px 14px', fontSize: 12, display: 'flex', alignItems: 'center', gap: 5 }}
+      onClick={onClick}
+    >
+      <X size={12} />
+      {t('connect.disconnect')}
+    </button>
+  )
 
   return (
     <div style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
@@ -97,7 +130,7 @@ export function Connect({ onContinue, onBack }: Props) {
           {t('connect.title')}
         </div>
         <p style={{ fontSize: 14, color: 'rgba(235,231,255,0.45)', marginBottom: 32 }}>
-          {t('connect.subtitle')}
+          {bothConnected ? t('connect.both_connected_subtitle') : t('connect.subtitle')}
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -131,13 +164,7 @@ export function Connect({ onContinue, onBack }: Props) {
                     <Check size={14} color="#1DB954" />
                     <span style={{ fontSize: 12, color: '#1DB954' }}>{t('connect.connected')}</span>
                   </div>
-                  <button
-                    className="btn-o"
-                    style={{ padding: '6px 14px', fontSize: 12 }}
-                    onClick={clearSpotify}
-                  >
-                    {t('connect.disconnect')}
-                  </button>
+                  {disconnectBtn(handleSpotifyDisconnect)}
                 </div>
               ) : (
                 <button
@@ -175,19 +202,13 @@ export function Connect({ onContinue, onBack }: Props) {
                 </div>
               </div>
 
-              {lastfmUsername ? (
+              {isLastfmConnected ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                     <Check size={14} color="#F87171" />
                     <span style={{ fontSize: 12, color: '#F87171' }}>{lastfmUsername}</span>
                   </div>
-                  <button
-                    className="btn-o"
-                    style={{ padding: '6px 14px', fontSize: 12 }}
-                    onClick={handleDisconnectLastfm}
-                  >
-                    <X size={12} /> {t('connect.disconnect')}
-                  </button>
+                  {disconnectBtn(handleDisconnectLastfm)}
                 </div>
               ) : lastfmState === 'idle' ? (
                 <button
@@ -200,8 +221,8 @@ export function Connect({ onContinue, onBack }: Props) {
               ) : null}
             </div>
 
-            {/* Username input — shown inline below the header row */}
-            {!lastfmUsername && (lastfmState === 'input' || lastfmState === 'validating' || lastfmState === 'error') && (
+            {/* Username input */}
+            {!isLastfmConnected && (lastfmState === 'input' || lastfmState === 'validating' || lastfmState === 'error') && (
               <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   <input
@@ -235,9 +256,9 @@ export function Connect({ onContinue, onBack }: Props) {
                       onClick={handleLastfmConfirm}
                       disabled={lastfmState === 'validating' || !inputValue.trim()}
                     >
-                      {lastfmState === 'validating' ? (
+                      {lastfmState === 'validating' && (
                         <Loader size={13} style={{ animation: 'spin 1s linear infinite' }} />
-                      ) : null}
+                      )}
                       {lastfmState === 'validating' ? t('connect.lastfm_validating') : t('connect.lastfm_confirm')}
                     </button>
                     <button
@@ -266,8 +287,8 @@ export function Connect({ onContinue, onBack }: Props) {
 
         </div>
 
-        {/* Last.fm explanation */}
-        {!lastfmUsername && (
+        {/* Last.fm explanation — only while Last.fm is not connected */}
+        {!isLastfmConnected && (
           <div
             className="glass"
             style={{
@@ -285,19 +306,39 @@ export function Connect({ onContinue, onBack }: Props) {
           </div>
         )}
 
-        {/* Actions */}
-        <div style={{ display: 'flex', gap: 10, marginTop: 28, flexWrap: 'wrap' }}>
-          {onContinue && (
-            <button className="btn-g" style={{ padding: '10px 24px', fontSize: 14 }} onClick={onContinue}>
-              {t('connect.continue')}
-            </button>
-          )}
-          {onBack && (
-            <button className="btn-o" style={{ padding: '10px 20px', fontSize: 13 }} onClick={onBack}>
-              {t('connect.skip')}
-            </button>
-          )}
-        </div>
+        {/* Both connected — advancing indicator */}
+        {bothConnected && (
+          <div
+            className="glass"
+            style={{
+              marginTop: 14,
+              padding: '12px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              borderLeft: '3px solid #1DB954',
+            }}
+          >
+            <Loader size={13} color="#1DB954" style={{ animation: 'spin 1s linear infinite', flexShrink: 0 }} />
+            <span style={{ fontSize: 13, color: '#1DB954' }}>{t('connect.advancing')}</span>
+          </div>
+        )}
+
+        {/* Actions — only show when not both connected */}
+        {!bothConnected && (
+          <div style={{ display: 'flex', gap: 10, marginTop: 28, flexWrap: 'wrap' }}>
+            {onContinue && isSpotifyConnected && (
+              <button className="btn-g" style={{ padding: '10px 24px', fontSize: 14 }} onClick={onContinue}>
+                {t('connect.continue')}
+              </button>
+            )}
+            {onBack && !isLastfmConnected && (
+              <button className="btn-o" style={{ padding: '10px 20px', fontSize: 13 }} onClick={onBack}>
+                {t('connect.skip')}
+              </button>
+            )}
+          </div>
+        )}
 
       </div>
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>

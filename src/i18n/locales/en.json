@@ -116,7 +116,9 @@
     "lastfm_why_title": "Why connect Last.fm? (optional)",
     "lastfm_why_desc": "Last.fm stores your full listening history and real play counts — data Spotify's API doesn't expose. Without it, charts and play counts will be estimated. You can skip this and connect later from the History tab.",
     "continue": "Go to Dashboard",
-    "skip": "Skip for now"
+    "skip": "Skip for now",
+    "both_connected_subtitle": "All connected. Taking you to the dashboard...",
+    "advancing": "All set! Redirecting..."
   },
   "callback": {
     "connecting": "Connecting to Spotify…",

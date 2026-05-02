@@ -31,7 +31,7 @@ export default function App() {
       {page === 'connect' && (
         <Connect
           onContinue={() => setPage('dashboard')}
-          onBack={() => setPage('dashboard')}
+          onBack={() => setPage('landing')}
         />
       )}
       {page === 'dashboard' && (
