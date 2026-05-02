@@ -56,6 +56,7 @@
     "period_4w": "4 Weeks",
     "period_6m": "6 Months",
     "period_all": "All Time",
+    "period_custom": "Custom",
     "now_playing": "● live",
     "hourly_title": "Listening Hours",
     "hourly_peak": "Peak: {{from}}h – {{to}}h",
@@ -85,7 +86,8 @@
     "year_hours": "Hours",
     "year_artists": "Artists",
     "year_scrobbles": "Plays",
-    "year_genres": "Genres"
+    "year_genres": "Genres",
+    "upload_hint": "Upload your Spotify streaming history in the History tab to see charts and detailed stats."
   },
   "connect": {
     "title": "Connect Integrations",

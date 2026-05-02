@@ -9,11 +9,12 @@ export function Habits() {
   const { hourly, weekly, topTracks, totalHours, activeDaysCount } = useSpotifyData()
   const history = useHistoryStore((s) => s.history)
 
-  const peakHourIndex = hourly.reduce(
-    (maxIdx, entry, idx, arr) => (entry.plays > arr[maxIdx].plays ? idx : maxIdx),
-    0
-  )
-  const peakDay = weekly.reduce((max, entry) => (entry.plays > max.plays ? entry : max), weekly[0])?.day ?? '—'
+  const peakHourIndex = hourly.length > 0
+    ? hourly.reduce((maxIdx, entry, idx, arr) => (entry.plays > arr[maxIdx].plays ? idx : maxIdx), 0)
+    : 0
+  const peakDay = weekly.length > 0
+    ? weekly.reduce((max, entry) => (entry.plays > max.plays ? entry : max), weekly[0])?.day ?? '—'
+    : '—'
 
   const topTrack = topTracks[0]
   const dailyAvgMin = activeDaysCount > 0 ? Math.round((totalHours * 60) / activeDaysCount) : 0

@@ -56,6 +56,7 @@
     "period_4w": "4 Semanas",
     "period_6m": "6 Meses",
     "period_all": "Todo o Tempo",
+    "period_custom": "Personalizado",
     "now_playing": "● ao vivo",
     "hourly_title": "Horários de Escuta",
     "hourly_peak": "Pico: {{from}}h – {{to}}h",
@@ -85,7 +86,8 @@
     "year_hours": "Horas",
     "year_artists": "Artistas",
     "year_scrobbles": "Reproduções",
-    "year_genres": "Gêneros"
+    "year_genres": "Gêneros",
+    "upload_hint": "Faça upload do seu histórico de streaming do Spotify na aba Histórico para ver gráficos e estatísticas detalhadas."
   },
   "connect": {
     "title": "Conectar Integrações",

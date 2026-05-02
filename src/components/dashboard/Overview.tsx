@@ -166,7 +166,14 @@ export function Overview() {
         </div>
       </div>
 
-      <MonthlyChart data={monthly} totalHours={totalHours} />
+      {monthly.length > 0
+        ? <MonthlyChart data={monthly} totalHours={totalHours} />
+        : !isDemo && !loading && (
+          <div className="glass" style={{ padding: '20px 22px', textAlign: 'center', color: 'rgba(235,231,255,0.38)', fontSize: 13 }}>
+            {t('dashboard.upload_hint')}
+          </div>
+        )
+      }
     </div>
   )
 }

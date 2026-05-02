@@ -124,6 +124,8 @@ export function useSpotifyData(timeRange: 'short_term' | 'medium_term' | 'long_t
       plays: lfMatch?.plays ?? 0,
       gradient: gradient(i),
       imageUrl: tr.album?.images?.[0]?.url ?? null,
+      spotifyUrl: tr.external_urls?.spotify ?? null,
+      albumName: tr.album?.name ?? null,
     }
   })
 
@@ -135,6 +137,9 @@ export function useSpotifyData(timeRange: 'short_term' | 'medium_term' | 'long_t
     gradient: gradient(i),
     color: GRADIENT_POOL[i % GRADIENT_POOL.length][0],
     imageUrl: a.images?.[0]?.url ?? null,
+    spotifyUrl: a.external_urls?.spotify ?? null,
+    followers: a.followers?.total ?? 0,
+    popularity: a.popularity ?? 0,
   }))
 
   // Monthly / hourly / weekly — use uploaded history if available, else empty
@@ -205,11 +210,11 @@ export function useSpotifyData(timeRange: 'short_term' | 'medium_term' | 'long_t
     isDemo: false,
     topTracks: realTracks,
     topArtists: realArtists,
-    monthly: monthly.length > 0 ? monthly : DEMO_MONTHLY,
-    hourly: hourly.some((h) => h.plays > 0) ? hourly : DEMO_HOURLY,
-    weekly: weekly.some((w) => w.plays > 0) ? weekly : DEMO_WEEKLY,
+    monthly,
+    hourly,
+    weekly,
     genres,
-    totalHours: totalHours || DEMO_MONTHLY.reduce((a, b) => a + b.hours, 0),
+    totalHours,
     totalPlays,
     uniqueArtistsCount,
     activeDaysCount,

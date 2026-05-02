@@ -3,6 +3,7 @@ import { Share2, Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { ArtworkPlaceholder } from '@/components/ui/ArtworkPlaceholder'
 import { DEMO_TRACKS, DEMO_ARTISTS } from './DEMO_DATA'
+import { useSpotifyData } from '@/hooks/useSpotifyData'
 
 type CardType = 'top5' | 'artista' | 'ano'
 
@@ -21,10 +22,32 @@ function getSiteUrl(): string {
 
 export function ShareSection() {
   const { t } = useTranslation()
+  const { isDemo, topTracks, topArtists, totalHours, totalPlays, uniqueArtistsCount, genres } = useSpotifyData()
   const siteUrl = getSiteUrl().replace(/^https?:\/\//, '')
   const [type, setType] = useState<CardType>('top5')
   const [copied, setCopied] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
+
+  // Use real data when authenticated, demo data only for preview
+  const displayTracks = isDemo ? DEMO_TRACKS : topTracks
+  const displayArtists = isDemo ? DEMO_ARTISTS : topArtists
+
+  const year = new Date().getFullYear()
+  const topArtist = displayArtists[0]
+
+  const yearStats = isDemo
+    ? [
+        { label: t('dashboard.year_hours'), value: '847h', color: '#1DB954' },
+        { label: t('dashboard.year_artists'), value: '284', color: '#A78BFA' },
+        { label: t('dashboard.year_scrobbles'), value: '12.4k', color: '#06B6D4' },
+        { label: t('dashboard.year_genres'), value: '47', color: '#F59E0B' },
+      ]
+    : [
+        { label: t('dashboard.year_hours'), value: totalHours > 0 ? `${totalHours}h` : '—', color: '#1DB954' },
+        { label: t('dashboard.year_artists'), value: uniqueArtistsCount > 0 ? String(uniqueArtistsCount) : String(topArtists.length), color: '#A78BFA' },
+        { label: t('dashboard.year_scrobbles'), value: totalPlays > 0 ? totalPlays > 9999 ? `${(totalPlays / 1000).toFixed(1)}k` : String(totalPlays) : '—', color: '#06B6D4' },
+        { label: t('dashboard.year_genres'), value: genres.length > 0 ? String(genres.length) : '—', color: '#F59E0B' },
+      ]
 
   const handleDownload = async () => {
     if (!cardRef.current) return
@@ -37,7 +60,6 @@ export function ShareSection() {
       clone.style.borderRadius = '22px'
       clone.style.overflow = 'hidden'
 
-      // wrapper enforces rounded clip so radial-gradients don't bleed out
       const wrapper = document.createElement('div')
       wrapper.style.position = 'fixed'
       wrapper.style.top = '-9999px'
@@ -108,9 +130,7 @@ export function ShareSection() {
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
             <div className="syne" style={{ fontSize: 17, fontWeight: 800 }}>Unwrapped</div>
-            <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.35)' }}>
-              {new Date().getFullYear()}
-            </span>
+            <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.35)' }}>{year}</span>
           </div>
 
           {/* Top 5 tracks */}
@@ -119,48 +139,61 @@ export function ShareSection() {
               <div style={{ fontSize: 10, letterSpacing: '1.4px', color: 'rgba(235,231,255,0.38)', textTransform: 'uppercase', marginBottom: 11 }}>
                 {t('dashboard.top_tracks')}
               </div>
-              {DEMO_TRACKS.slice(0, 5).map((tr) => (
+              {displayTracks.slice(0, 5).map((tr) => (
                 <div key={tr.rank} style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 9 }}>
                   <span style={{ fontSize: 12.5, fontWeight: 700, color: tr.gradient[0], width: 14, flexShrink: 0 }}>
                     {tr.rank}
                   </span>
-                  <ArtworkPlaceholder gradient={tr.gradient} size={32} radius={7} />
+                  <ArtworkPlaceholder
+                    gradient={tr.gradient}
+                    size={32}
+                    radius={7}
+                    imageUrl={'imageUrl' in tr ? tr.imageUrl as string | null : null}
+                  />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 11.5, fontWeight: 600, wordBreak: 'break-word' }}>{tr.name}</div>
                     <div style={{ fontSize: 10, color: 'rgba(235,231,255,0.38)' }}>{tr.artist}</div>
                   </div>
-                  <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.32)', flexShrink: 0, marginLeft: 4 }}>{tr.plays}×</span>
+                  {tr.plays > 0 && (
+                    <span style={{ fontSize: 10.5, color: 'rgba(235,231,255,0.32)', flexShrink: 0, marginLeft: 4 }}>
+                      {tr.plays}×
+                    </span>
+                  )}
                 </div>
               ))}
             </>
           )}
 
           {/* Top artist */}
-          {type === 'artista' && (
+          {type === 'artista' && topArtist && (
             <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-              <ArtworkPlaceholder gradient={DEMO_ARTISTS[0].gradient} size={76} radius={19} />
+              <ArtworkPlaceholder
+                gradient={topArtist.gradient}
+                size={76}
+                radius={19}
+                imageUrl={'imageUrl' in topArtist ? topArtist.imageUrl as string | null : null}
+              />
               <div style={{ marginTop: 11, fontSize: 10, color: 'rgba(235,231,255,0.38)', letterSpacing: '1.2px', textTransform: 'uppercase' }}>
                 {t('dashboard.my_top_artist')}
               </div>
               <div className="syne" style={{ fontSize: 26, fontWeight: 800, marginTop: 3 }}>
-                {DEMO_ARTISTS[0].name}
+                {topArtist.name}
               </div>
-              <div className="syne" style={{ fontSize: 34, fontWeight: 800, color: '#E91E63', marginTop: 6 }}>
-                {DEMO_ARTISTS[0].plays}
-              </div>
-              <div style={{ fontSize: 11, color: 'rgba(235,231,255,0.38)' }}>{t('dashboard.plays_year')}</div>
+              {topArtist.plays > 0 && (
+                <>
+                  <div className="syne" style={{ fontSize: 34, fontWeight: 800, color: '#E91E63', marginTop: 6 }}>
+                    {topArtist.plays.toLocaleString()}
+                  </div>
+                  <div style={{ fontSize: 11, color: 'rgba(235,231,255,0.38)' }}>{t('dashboard.plays_year')}</div>
+                </>
+              )}
             </div>
           )}
 
           {/* Year in review */}
           {type === 'ano' && (
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
-              {[
-                { label: t('dashboard.year_hours'), value: '847h', color: '#1DB954' },
-                { label: t('dashboard.year_artists'), value: '284', color: '#A78BFA' },
-                { label: t('dashboard.year_scrobbles'), value: '12.4k', color: '#06B6D4' },
-                { label: t('dashboard.year_genres'), value: '47', color: '#F59E0B' },
-              ].map((s) => (
+              {yearStats.map((s) => (
                 <div key={s.label} style={{ textAlign: 'center', padding: '9px', background: 'rgba(255,255,255,0.05)', borderRadius: 9 }}>
                   <div className="syne" style={{ fontSize: 19, fontWeight: 800, color: s.color }}>{s.value}</div>
                   <div style={{ fontSize: 10, color: 'rgba(235,231,255,0.38)' }}>{s.label}</div>
