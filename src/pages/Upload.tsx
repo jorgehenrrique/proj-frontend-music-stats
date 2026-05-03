@@ -1,10 +1,65 @@
 import { useState, useRef, useCallback } from 'react'
-import { Upload as UploadIcon, CheckCircle, Loader, ArrowRight } from 'lucide-react'
+import { Upload as UploadIcon, CheckCircle, Loader, ArrowRight, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { parseSpotifyHistory } from '@/api/history'
 import { useUserStore } from '@/store/userStore'
 import { useHistoryStore } from '@/store/historyStore'
 import { AuroraBlobs } from '@/components/layout/AuroraBlobs'
+
+const PLATFORM_COLORS: Record<string, string> = {
+  Android: '#1DB954',
+  iOS: '#A78BFA',
+  'Web Player': '#06B6D4',
+  macOS: '#F59E0B',
+  Windows: '#3B82F6',
+  Linux: '#EC4899',
+  Chromecast: '#F97316',
+  TV: '#8B5CF6',
+  Console: '#EF4444',
+  Speaker: '#10B981',
+  Outro: 'rgba(235,231,255,0.2)',
+  Desconhecido: 'rgba(235,231,255,0.15)',
+}
+
+function PlatformChart({ byPlatform }: { byPlatform: Record<string, number> | undefined }) {
+  if (!byPlatform || Object.keys(byPlatform).length === 0) return null
+  const total = Object.values(byPlatform).reduce((s, n) => s + n, 0)
+  const sorted = Object.entries(byPlatform).sort(([, a], [, b]) => b - a)
+
+  return (
+    <div className="glass2" style={{ padding: '16px 18px', marginBottom: 24 }}>
+      <div className="syne" style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>
+        Dispositivos de reprodução
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {sorted.map(([name, count]) => {
+          const pct = Math.round((count / total) * 100)
+          const color = PLATFORM_COLORS[name] ?? 'rgba(235,231,255,0.3)'
+          return (
+            <div key={name}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ fontSize: 12, color: 'rgba(235,231,255,0.7)' }}>{name}</span>
+                <span style={{ fontSize: 12, color: 'rgba(235,231,255,0.38)', fontVariantNumeric: 'tabular-nums' }}>
+                  {count.toLocaleString()} · {pct}%
+                </span>
+              </div>
+              <div style={{ height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.06)' }}>
+                <div
+                  style={{
+                    height: '100%',
+                    width: `${pct}%`,
+                    borderRadius: 2,
+                    background: color,
+                  }}
+                />
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
 interface Props {
   onDone?: () => void
@@ -12,15 +67,16 @@ interface Props {
 
 export function Upload({ onDone }: Props) {
   const { t } = useTranslation()
+  const setHistoryLoaded = useUserStore((s) => s.setHistoryLoaded)
+  const setHistory = useHistoryStore((s) => s.setHistory)
+  const clearHistory = useHistoryStore((s) => s.clearHistory)
+  const existingHistory = useHistoryStore((s) => s.history)
   const [dragging, setDragging] = useState(false)
   const [status, setStatus] = useState<'idle' | 'processing' | 'done' | 'error'>(
-    () => (useHistoryStore.getState().history ? 'done' : 'idle')
+    existingHistory ? 'done' : 'idle'
   )
   const [error, setError] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
-  const setHistoryLoaded = useUserStore((s) => s.setHistoryLoaded)
-  const setHistory = useHistoryStore((s) => s.setHistory)
-  const existingHistory = useHistoryStore((s) => s.history)
 
   const processFiles = useCallback(
     async (files: File[]) => {
@@ -82,12 +138,6 @@ export function Upload({ onDone }: Props) {
           {t('upload.why')}
         </p>
 
-        {existingHistory && status === 'idle' && (
-          <div className="glass2" style={{ padding: '10px 16px', marginBottom: 16, fontSize: 12.5, color: '#1DB954', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <CheckCircle size={14} />
-            {t('upload.already_loaded', { plays: existingHistory.totalPlays.toLocaleString() })}
-          </div>
-        )}
 
         {/* Drop zone */}
         <div
@@ -115,6 +165,19 @@ export function Upload({ onDone }: Props) {
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
               <CheckCircle size={32} color="#1DB954" />
               <span style={{ fontSize: 14, color: '#1DB954', fontWeight: 600 }}>{t('upload.success')}</span>
+              {existingHistory && (
+                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <span style={{ fontSize: 12, color: 'rgba(235,231,255,0.5)' }}>
+                    <span style={{ color: '#1DB954', fontWeight: 700 }}>{existingHistory.totalPlays.toLocaleString()}</span> reproduções
+                  </span>
+                  <span style={{ fontSize: 12, color: 'rgba(235,231,255,0.5)' }}>
+                    <span style={{ color: '#A78BFA', fontWeight: 700 }}>{existingHistory.uniqueArtists.size.toLocaleString()}</span> artistas
+                  </span>
+                  <span style={{ fontSize: 12, color: 'rgba(235,231,255,0.5)' }}>
+                    <span style={{ color: '#06B6D4', fontWeight: 700 }}>{Math.round(existingHistory.totalMs / 3600000).toLocaleString()}h</span> ouvidas
+                  </span>
+                </div>
+              )}
               <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
                 {onDone && (
                   <button className="btn-g" onClick={onDone}>
@@ -152,6 +215,11 @@ export function Upload({ onDone }: Props) {
           </div>
         )}
 
+        {/* Platform breakdown */}
+        {existingHistory && (
+          <PlatformChart byPlatform={existingHistory.byPlatform} />
+        )}
+
         {/* Instructions */}
         <div className="glass" style={{ padding: 'clamp(16px,3vw,22px)' }}>
           <div className="syne" style={{ fontSize: 14, fontWeight: 700, marginBottom: 14 }}>
@@ -171,6 +239,37 @@ export function Upload({ onDone }: Props) {
             </p>
           </div>
         </div>
+
+        {existingHistory && (
+          <div style={{ marginTop: 24, textAlign: 'center' }}>
+            <button
+              onClick={() => {
+              clearHistory()
+              setHistoryLoaded(false)
+              setStatus('idle')
+              localStorage.removeItem('unwrapped-history')
+            }}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: 12,
+                color: 'rgba(235,231,255,0.25)',
+                padding: '6px 10px',
+                borderRadius: 6,
+                transition: 'color .2s',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#F87171')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(235,231,255,0.25)')}
+            >
+              <Trash2 size={12} />
+              {t('upload.clear')}
+            </button>
+          </div>
+        )}
       </div>
       <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
     </div>

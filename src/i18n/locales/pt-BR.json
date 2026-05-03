@@ -148,6 +148,7 @@
     "note": "Os arquivos ficam apenas no seu navegador. Nenhum dado é enviado para servidores externos.",
     "already_loaded": "Histórico carregado — {{plays}} reproduções no total. Faça upload novamente para atualizar.",
     "go_to_stats": "Ver estatísticas",
-    "replace": "Carregar novos arquivos"
+    "replace": "Carregar novos arquivos",
+    "clear": "Apagar histórico carregado"
   }
 }

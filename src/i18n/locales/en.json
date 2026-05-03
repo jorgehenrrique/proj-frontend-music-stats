@@ -148,6 +148,7 @@
     "note": "Files stay in your browser only. No data is sent to external servers.",
     "already_loaded": "History loaded — {{plays}} plays total. Upload again to update.",
     "go_to_stats": "View statistics",
-    "replace": "Load new files"
+    "replace": "Load new files",
+    "clear": "Clear loaded history"
   }
 }

@@ -12,6 +12,7 @@ interface SerializedHistory {
   byHour: Record<number, number>
   byWeekday: Record<number, number>
   byMonth: Record<string, number>
+  byPlatform: Record<string, number>
   topTracks: { name: string; artist: string; plays: number }[]
   topArtists: { name: string; plays: number }[]
 }
@@ -45,6 +46,7 @@ export const useHistoryStore = create<HistoryState>()(
                 uniqueArtists: new Set(h.uniqueArtists),
                 uniqueTracks: new Set(h.uniqueTracks),
                 activeDays: new Set(h.activeDays),
+                byPlatform: h.byPlatform ?? {},
               } as ProcessedHistory,
               setHistory: () => {},
               clearHistory: () => {},
@@ -55,16 +57,18 @@ export const useHistoryStore = create<HistoryState>()(
         setItem: (key, value) => {
           const { state } = value as { state: HistoryState }
           const h = state.history
+          if (!h) {
+            localStorage.removeItem(key)
+            return
+          }
           const serialized = {
             state: {
-              history: h
-                ? {
-                    ...h,
-                    uniqueArtists: [...h.uniqueArtists],
-                    uniqueTracks: [...h.uniqueTracks],
-                    activeDays: [...h.activeDays],
-                  }
-                : null,
+              history: {
+                ...h,
+                uniqueArtists: [...h.uniqueArtists],
+                uniqueTracks: [...h.uniqueTracks],
+                activeDays: [...h.activeDays],
+              },
             },
             version: 0,
           }

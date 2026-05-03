@@ -28,6 +28,22 @@ export function parseSpotifyHistory(files: File[]): Promise<ProcessedHistory> {
   })
 }
 
+function normalizePlatform(raw: string | null): string {
+  if (!raw) return 'Desconhecido'
+  const p = raw.toLowerCase()
+  if (p.includes('android')) return 'Android'
+  if (p.includes('ios') || p.includes('iphone') || p.includes('ipad')) return 'iOS'
+  if (p.includes('web_player') || p.includes('web player')) return 'Web Player'
+  if (p.includes('osx') || p.includes('macos')) return 'macOS'
+  if (p.includes('windows')) return 'Windows'
+  if (p.includes('linux')) return 'Linux'
+  if (p.includes('cast') || p.includes('chromecast')) return 'Chromecast'
+  if (p.includes('tv') || p.includes('television')) return 'TV'
+  if (p.includes('game') || p.includes('playstation') || p.includes('xbox')) return 'Console'
+  if (p.includes('partner') || p.includes('partner_speaker')) return 'Speaker'
+  return 'Outro'
+}
+
 function processEntries(entries: StreamingEntry[]): ProcessedHistory {
   const result: ProcessedHistory = {
     totalMs: 0,
@@ -38,6 +54,7 @@ function processEntries(entries: StreamingEntry[]): ProcessedHistory {
     byHour: {},
     byWeekday: {},
     byMonth: {},
+    byPlatform: {},
     topTracks: [],
     topArtists: [],
   }
@@ -64,6 +81,9 @@ function processEntries(entries: StreamingEntry[]): ProcessedHistory {
 
     const weekday = date.getDay()
     result.byWeekday[weekday] = (result.byWeekday[weekday] ?? 0) + 1
+
+    const platform = normalizePlatform(entry.platform ?? null)
+    result.byPlatform[platform] = (result.byPlatform[platform] ?? 0) + 1
 
     const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
     result.byMonth[month] = (result.byMonth[month] ?? 0) + entry.ms_played

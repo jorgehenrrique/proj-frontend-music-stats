@@ -23,6 +23,7 @@ export interface GenreStats {
 export interface StreamingEntry {
   ts: string
   ms_played: number
+  platform: string | null
   master_metadata_track_name: string | null
   master_metadata_album_artist_name: string | null
   master_metadata_album_album_name: string | null
@@ -41,6 +42,7 @@ export interface ProcessedHistory {
   byHour: Record<number, number>
   byWeekday: Record<number, number>
   byMonth: Record<string, number>
+  byPlatform: Record<string, number>
   topTracks: { name: string; artist: string; plays: number }[]
   topArtists: { name: string; plays: number }[]
 }
