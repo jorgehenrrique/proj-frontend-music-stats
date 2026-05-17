@@ -4,6 +4,8 @@
 
 > Open source · MIT License · Self-hosted
 
+![Landing page do Unwrapped](https://raw.githubusercontent.com/jorgehenrrique/proj-frontend-music-stats/main/.github/images/landing-page.png)
+
 ---
 
 ## Features
@@ -15,6 +17,28 @@
 - **Cards para compartilhar** — export PNG com cores dinâmicas do artista
 - **3 idiomas** — pt-BR, en, es
 - **Dark glassmorphism** — design futurista com aurora animado
+
+---
+
+## Preview
+
+### Dashboard
+
+![Visão geral com Spotify e Last.fm conectados](https://raw.githubusercontent.com/jorgehenrrique/proj-frontend-music-stats/main/.github/images/dashboard-overview.png)
+
+![Top músicas e artistas](https://raw.githubusercontent.com/jorgehenrrique/proj-frontend-music-stats/main/.github/images/top-tracks.png)
+
+### Modo demonstração
+
+![Dashboard em português (demo)](https://raw.githubusercontent.com/jorgehenrrique/proj-frontend-music-stats/main/.github/images/dashboard-overview-demo-pt.png)
+
+![Dashboard em inglês (demo)](https://raw.githubusercontent.com/jorgehenrrique/proj-frontend-music-stats/main/.github/images/dashboard-overview-demo-en.png)
+
+### Integrações e histórico
+
+![Conectar Spotify e Last.fm](https://raw.githubusercontent.com/jorgehenrrique/proj-frontend-music-stats/main/.github/images/connect-integrations.png)
+
+![Upload do histórico estendido (GDPR)](https://raw.githubusercontent.com/jorgehenrrique/proj-frontend-music-stats/main/.github/images/history-upload.png)
 
 ---
 
@@ -86,6 +110,8 @@ VITE_LASTFM_SHARED_SECRET=seu_shared_secret
 ```
 
 > O usuário informa o próprio username do Last.fm diretamente no app. O app valida que o perfil existe e salva localmente — sem login, sem senha, sem redirecionamento.
+
+Para histórico completo e play counts reais, conecte o Spotify ao Last.fm em [last.fm/settings/applications](https://www.last.fm/settings/applications) (Spotify Scrobbling) e informe seu username na tela de integrações do app.
 
 ---
 
